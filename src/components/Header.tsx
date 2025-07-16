@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -51,12 +53,25 @@ const Header = () => {
           </div>
           
           <nav className="hidden md:flex items-center space-x-2">
-            <Button variant="ghost" asChild>
-              <Link to="/login">Entrar</Link>
-            </Button>
-            <Button variant="hero" size="sm" asChild>
-              <Link to="/register">Começar Grátis</Link>
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+                <Button variant="outline" size="sm" onClick={signOut}>
+                  Sair
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Entrar</Link>
+                </Button>
+                <Button variant="hero" size="sm" asChild>
+                  <Link to="/register">Começar Grátis</Link>
+                </Button>
+              </>
+            )}
           </nav>
 
           <button
@@ -107,16 +122,31 @@ const Header = () => {
               Ajuda
             </Link>
             <div className="px-3 py-2 space-y-2">
-              <Button variant="ghost" className="w-full justify-start" asChild>
-                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                  Entrar
-                </Link>
-              </Button>
-              <Button variant="hero" className="w-full" asChild>
-                <Link to="/register" onClick={() => setIsMenuOpen(false)}>
-                  Começar Grátis
-                </Link>
-              </Button>
+              {user ? (
+                <>
+                  <Button variant="ghost" className="w-full justify-start" asChild>
+                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="w-full" onClick={() => { signOut(); setIsMenuOpen(false); }}>
+                    Sair
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" className="w-full justify-start" asChild>
+                    <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                      Entrar
+                    </Link>
+                  </Button>
+                  <Button variant="hero" className="w-full" asChild>
+                    <Link to="/register" onClick={() => setIsMenuOpen(false)}>
+                      Começar Grátis
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

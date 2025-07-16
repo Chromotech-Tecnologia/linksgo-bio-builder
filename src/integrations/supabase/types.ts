@@ -14,7 +14,213 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      project_links: {
+        Row: {
+          click_count: number
+          created_at: string
+          icon_name: string | null
+          icon_url: string | null
+          id: string
+          is_active: boolean
+          position: number
+          project_id: string
+          title: string
+          url: string
+        }
+        Insert: {
+          click_count?: number
+          created_at?: string
+          icon_name?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          position?: number
+          project_id: string
+          title: string
+          url: string
+        }
+        Update: {
+          click_count?: number
+          created_at?: string
+          icon_name?: string | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          position?: number
+          project_id?: string
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_links_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_media: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_type: string
+          file_url: string
+          id: string
+          project_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_type: string
+          file_url: string
+          id?: string
+          project_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_type?: string
+          file_url?: string
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_media_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          avatar_url: string | null
+          background_url: string | null
+          created_at: string
+          custom_css: string | null
+          description: string | null
+          id: string
+          is_published: boolean
+          slug: string
+          template_id: string
+          theme_config: Json
+          title: string
+          updated_at: string
+          user_id: string
+          views_count: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          background_url?: string | null
+          created_at?: string
+          custom_css?: string | null
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          slug: string
+          template_id: string
+          theme_config?: Json
+          title: string
+          updated_at?: string
+          user_id: string
+          views_count?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          background_url?: string | null
+          created_at?: string
+          custom_css?: string | null
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          slug?: string
+          template_id?: string
+          theme_config?: Json
+          title?: string
+          updated_at?: string
+          user_id?: string
+          views_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      templates: {
+        Row: {
+          config: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          preview_image: string | null
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          preview_image?: string | null
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          preview_image?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
