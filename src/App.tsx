@@ -7,6 +7,10 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import ProjectCreate from "./pages/ProjectCreate";
+import ProjectEdit from "./pages/ProjectEdit";
+import ProjectView from "./pages/ProjectView";
+import PublicLinksGo from "./pages/PublicLinksGo";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -29,6 +33,22 @@ const App = () => (
                 <Dashboard />
               </ProtectedRoute>
             } />
+            <Route path="/dashboard/projects/new" element={
+              <ProtectedRoute>
+                <ProjectCreate />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/projects/:id/edit" element={
+              <ProtectedRoute>
+                <ProjectEdit />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/projects/:id" element={
+              <ProtectedRoute>
+                <ProjectView />
+              </ProtectedRoute>
+            } />
+            <Route path="/:slug" element={<PublicLinksGo />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

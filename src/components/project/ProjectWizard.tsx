@@ -1,0 +1,210 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { TemplateSelector } from "./TemplateSelector";
+import { ProjectBasicInfo } from "./ProjectBasicInfo";
+import { ProjectMediaUpload } from "./ProjectMediaUpload";
+import { ProjectLinksEditor } from "./ProjectLinksEditor";
+import { ProjectPreview } from "./ProjectPreview";
+import { useCreateProject } from "@/hooks/useProjects";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+const STEPS = [
+  { id: 1, title: "Template", description: "Escolha um design" },
+  { id: 2, title: "Informações", description: "Dados básicos" },
+  { id: 3, title: "Mídia", description: "Avatar e imagens" },
+  { id: 4, title: "Links", description: "Adicione seus links" },
+  { id: 5, title: "Finalizar", description: "Revisar e publicar" },
+];
+
+export const ProjectWizard = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [projectData, setProjectData] = useState({
+    templateId: "",
+    title: "",
+    slug: "",
+    description: "",
+    avatarUrl: "",
+    backgroundUrl: "",
+    links: [] as Array<{ title: string; url: string; iconName?: string }>,
+  });
+
+  const navigate = useNavigate();
+  const createProject = useCreateProject();
+
+  const progress = (currentStep / STEPS.length) * 100;
+
+  const updateProjectData = (data: Partial<typeof projectData>) => {
+    setProjectData(prev => ({ ...prev, ...data }));
+  };
+
+  const nextStep = () => {
+    if (currentStep < STEPS.length) {
+      setCurrentStep(prev => prev + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(prev => prev - 1);
+    }
+  };
+
+  const canProceed = () => {
+    switch (currentStep) {
+      case 1:
+        return !!projectData.templateId;
+      case 2:
+        return !!(projectData.title && projectData.slug);
+      case 3:
+      case 4:
+        return true;
+      case 5:
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  const handleFinish = async (shouldPublish: boolean = false) => {
+    try {
+      const project = await createProject.mutateAsync({
+        title: projectData.title,
+        slug: projectData.slug,
+        description: projectData.description,
+        template_id: projectData.templateId,
+        theme_config: {
+          avatarUrl: projectData.avatarUrl,
+          backgroundUrl: projectData.backgroundUrl,
+          links: projectData.links,
+        },
+      });
+
+      if (shouldPublish) {
+        // Update project to published
+        // This would need the update mutation
+      }
+
+      navigate(`/dashboard/projects/${project.id}`);
+    } catch (error) {
+      console.error("Error creating project:", error);
+    }
+  };
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <TemplateSelector
+            selectedTemplateId={projectData.templateId}
+            onSelectTemplate={(templateId) => updateProjectData({ templateId })}
+          />
+        );
+      case 2:
+        return (
+          <ProjectBasicInfo
+            data={projectData}
+            onChange={updateProjectData}
+          />
+        );
+      case 3:
+        return (
+          <ProjectMediaUpload
+            data={projectData}
+            onChange={updateProjectData}
+          />
+        );
+      case 4:
+        return (
+          <ProjectLinksEditor
+            links={projectData.links}
+            onChange={(links) => updateProjectData({ links })}
+          />
+        );
+      case 5:
+        return (
+          <ProjectPreview
+            data={projectData}
+            onPublish={handleFinish}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-8">
+        <Card className="max-w-4xl mx-auto">
+          <CardHeader>
+            <CardTitle>Criar Novo LinksGo</CardTitle>
+            <div className="space-y-4">
+              <Progress value={progress} className="w-full" />
+              <div className="flex justify-between text-sm">
+                {STEPS.map((step) => (
+                  <div
+                    key={step.id}
+                    className={`text-center ${
+                      step.id === currentStep
+                        ? "text-primary font-medium"
+                        : step.id < currentStep
+                        ? "text-muted-foreground"
+                        : "text-muted-foreground/50"
+                    }`}
+                  >
+                    <div className="font-medium">{step.title}</div>
+                    <div className="text-xs">{step.description}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="min-h-[500px]">
+            {renderStepContent()}
+          </CardContent>
+
+          <div className="flex justify-between p-6 border-t">
+            <Button
+              onClick={prevStep}
+              disabled={currentStep === 1}
+              variant="outline"
+            >
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Anterior
+            </Button>
+
+            {currentStep < STEPS.length ? (
+              <Button
+                onClick={nextStep}
+                disabled={!canProceed()}
+              >
+                Próximo
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            ) : (
+              <div className="space-x-2">
+                <Button
+                  onClick={() => handleFinish(false)}
+                  variant="outline"
+                  disabled={createProject.isPending}
+                >
+                  Salvar Rascunho
+                </Button>
+                <Button
+                  onClick={() => handleFinish(true)}
+                  disabled={createProject.isPending}
+                >
+                  Publicar Agora
+                </Button>
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+};
