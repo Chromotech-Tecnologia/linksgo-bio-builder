@@ -2,6 +2,7 @@ import React, { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useProject, useUpdateProject } from "@/hooks/useProjects";
 import { useProjectLinks } from "@/hooks/useProjectLinks";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -56,6 +57,7 @@ const ProjectEdit = () => {
     if (!id) return;
 
     try {
+      // Update project basic info
       await updateProject.mutateAsync({
         id,
         title: projectData.title,
@@ -71,6 +73,28 @@ const ProjectEdit = () => {
           }
         ),
       });
+
+      // Update project links
+      if (linksData.length > 0) {
+        // Delete existing links
+        await supabase
+          .from('project_links')
+          .delete()
+          .eq('project_id', id);
+
+        // Insert updated links
+        const linksToInsert = linksData.map((link, index) => ({
+          project_id: id,
+          title: link.title,
+          url: link.url,
+          icon_name: link.iconName,
+          position: index,
+        }));
+
+        await supabase
+          .from('project_links')
+          .insert(linksToInsert);
+      }
     } catch (error) {
       console.error("Error updating project:", error);
     }
