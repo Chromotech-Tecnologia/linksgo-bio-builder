@@ -60,6 +60,9 @@ export const useCreateProject = () => {
       description?: string;
       template_id: string;
       theme_config?: any;
+      is_published?: boolean;
+      avatar_url?: string;
+      background_url?: string;
     }) => {
       if (!user) throw new Error("User not authenticated");
 

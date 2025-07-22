@@ -85,6 +85,9 @@ export const ProjectWizard = () => {
         slug: projectData.slug,
         description: projectData.description,
         template_id: projectData.templateId,
+        is_published: shouldPublish,
+        avatar_url: projectData.avatarUrl,
+        background_url: projectData.backgroundUrl,
         theme_config: {
           avatarUrl: projectData.avatarUrl,
           backgroundUrl: projectData.backgroundUrl,
