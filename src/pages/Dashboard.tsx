@@ -1,4 +1,6 @@
+
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -25,6 +27,7 @@ interface Project {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -88,6 +91,22 @@ const Dashboard = () => {
         variant: "destructive"
       });
     }
+  };
+
+  const handleCreateProject = () => {
+    navigate('/dashboard/projects/new');
+  };
+
+  const handleEditProject = (projectId: string) => {
+    navigate(`/dashboard/projects/${projectId}/edit`);
+  };
+
+  const handleViewProject = (projectId: string) => {
+    navigate(`/dashboard/projects/${projectId}`);
+  };
+
+  const handleOpenPublicProject = (slug: string) => {
+    window.open(`/${slug}`, '_blank');
   };
 
   if (loading) {
@@ -170,7 +189,7 @@ const Dashboard = () => {
         {/* Projects Section */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Meus Projetos</h2>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={handleCreateProject}>
             <Plus className="h-4 w-4" />
             Novo Projeto
           </Button>
@@ -189,7 +208,7 @@ const Dashboard = () => {
                   <p className="text-muted-foreground mb-4">
                     Crie seu primeiro projeto de bio links para começar
                   </p>
-                  <Button>
+                  <Button onClick={handleCreateProject}>
                     <Plus className="h-4 w-4 mr-2" />
                     Criar Primeiro Projeto
                   </Button>
@@ -227,13 +246,23 @@ const Dashboard = () => {
                     </div>
 
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="flex-1 gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1 gap-2"
+                        onClick={() => handleEditProject(project.id)}
+                      >
                         <Edit className="h-4 w-4" />
                         Editar
                       </Button>
                       
                       {project.is_published && (
-                        <Button variant="outline" size="sm" className="gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="gap-2"
+                          onClick={() => handleOpenPublicProject(project.slug)}
+                        >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
                       )}

@@ -1,7 +1,8 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Share2, Edit, Rocket } from "lucide-react";
+import { Eye, Edit, Rocket, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ProjectPreviewProps {
@@ -14,17 +15,18 @@ interface ProjectPreviewProps {
     links: Array<{ title: string; url: string; iconName?: string }>;
   };
   onPublish: (shouldPublish: boolean) => void;
+  isProcessing?: boolean;
 }
 
-export const ProjectPreview = ({ data, onPublish }: ProjectPreviewProps) => {
-  const previewUrl = `https://linksgo.app/${data.slug}`;
+export const ProjectPreview = ({ data, onPublish, isProcessing = false }: ProjectPreviewProps) => {
+  const previewUrl = `${window.location.origin}/${data.slug}`;
 
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-2">Revisar e Finalizar</h2>
         <p className="text-muted-foreground">
-          Confira como seu LinksGo ficará antes de publicar
+          Confira como seu LinksGo ficará antes de criar
         </p>
       </div>
 
@@ -68,19 +70,25 @@ export const ProjectPreview = ({ data, onPublish }: ProjectPreviewProps) => {
 
                 {/* Links */}
                 <div className="space-y-3">
-                  {data.links.slice(0, 3).map((link, index) => (
-                    <div 
-                      key={index}
-                      className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">{link.title}</span>
-                        <span className="text-xs bg-white/20 px-2 py-1 rounded">
-                          {link.iconName || "link"}
-                        </span>
+                  {data.links.length > 0 ? (
+                    data.links.slice(0, 3).map((link, index) => (
+                      <div 
+                        key={index}
+                        className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{link.title}</span>
+                          <span className="text-xs bg-white/20 px-2 py-1 rounded">
+                            {link.iconName || "link"}
+                          </span>
+                        </div>
                       </div>
+                    ))
+                  ) : (
+                    <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border-2 border-dashed border-white/20">
+                      <p className="text-white/60 text-sm">Nenhum link adicionado ainda</p>
                     </div>
-                  ))}
+                  )}
                   {data.links.length > 3 && (
                     <div className="text-center text-white/60 text-sm">
                       +{data.links.length - 3} mais links
@@ -125,11 +133,11 @@ export const ProjectPreview = ({ data, onPublish }: ProjectPreviewProps) => {
             <div className="bg-muted/50 p-4 rounded-lg">
               <h4 className="font-medium mb-2">Links ({data.links.length})</h4>
               {data.links.length > 0 ? (
-                <div className="space-y-1 text-sm">
+                <div className="space-y-1 text-sm max-h-32 overflow-y-auto">
                   {data.links.map((link, index) => (
-                    <div key={index} className="flex justify-between">
-                      <span>{link.title}</span>
-                      <span className="text-muted-foreground">
+                    <div key={index} className="flex justify-between items-center">
+                      <span className="truncate">{link.title}</span>
+                      <span className="text-muted-foreground ml-2">
                         {link.iconName || "link"}
                       </span>
                     </div>
@@ -142,26 +150,46 @@ export const ProjectPreview = ({ data, onPublish }: ProjectPreviewProps) => {
           </div>
 
           <div className="space-y-3 pt-4 border-t">
-            <h4 className="font-medium">Próximos Passos</h4>
+            <h4 className="font-medium">Finalizar Criação</h4>
             <div className="space-y-2">
               <Button 
                 onClick={() => onPublish(false)} 
                 variant="outline" 
                 className="w-full"
+                disabled={isProcessing}
               >
-                <Edit className="h-4 w-4 mr-2" />
-                Salvar como Rascunho
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  <>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Salvar como Rascunho
+                  </>
+                )}
               </Button>
               <Button 
                 onClick={() => onPublish(true)} 
                 className="w-full"
+                disabled={isProcessing}
               >
-                <Rocket className="h-4 w-4 mr-2" />
-                Publicar LinksGo
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Criando...
+                  </>
+                ) : (
+                  <>
+                    <Rocket className="h-4 w-4 mr-2" />
+                    Criar LinksGo
+                  </>
+                )}
               </Button>
             </div>
             <p className="text-xs text-muted-foreground text-center">
-              Após publicar, você poderá compartilhar a URL e acessar as estatísticas
+              Após criar, você poderá editar e publicar quando quiser
             </p>
           </div>
         </div>

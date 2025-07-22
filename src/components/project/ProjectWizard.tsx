@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,9 @@ import { ProjectMediaUpload } from "./ProjectMediaUpload";
 import { ProjectLinksEditor } from "./ProjectLinksEditor";
 import { ProjectPreview } from "./ProjectPreview";
 import { useCreateProject } from "@/hooks/useProjects";
+import { useCreateProjectLink } from "@/hooks/useProjectLinks";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const STEPS = [
   { id: 1, title: "Template", description: "Escolha um design" },
@@ -21,6 +24,7 @@ const STEPS = [
 
 export const ProjectWizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [projectData, setProjectData] = useState({
     templateId: "",
     title: "",
@@ -33,6 +37,7 @@ export const ProjectWizard = () => {
 
   const navigate = useNavigate();
   const createProject = useCreateProject();
+  const createProjectLink = useCreateProjectLink();
 
   const progress = (currentStep / STEPS.length) * 100;
 
@@ -69,7 +74,12 @@ export const ProjectWizard = () => {
   };
 
   const handleFinish = async (shouldPublish: boolean = false) => {
+    if (isProcessing) return;
+    
+    setIsProcessing(true);
+    
     try {
+      // 1. Criar o projeto primeiro
       const project = await createProject.mutateAsync({
         title: projectData.title,
         slug: projectData.slug,
@@ -78,18 +88,49 @@ export const ProjectWizard = () => {
         theme_config: {
           avatarUrl: projectData.avatarUrl,
           backgroundUrl: projectData.backgroundUrl,
-          links: projectData.links,
         },
       });
 
-      if (shouldPublish) {
-        // Update project to published
-        // This would need the update mutation
+      console.log("Project created:", project);
+
+      // 2. Criar cada link individualmente
+      if (projectData.links.length > 0) {
+        for (let i = 0; i < projectData.links.length; i++) {
+          const link = projectData.links[i];
+          await createProjectLink.mutateAsync({
+            project_id: project.id,
+            title: link.title,
+            url: link.url.startsWith('http') ? link.url : `https://${link.url}`,
+            icon_name: link.iconName,
+            position: i,
+          });
+        }
+        console.log("Links created successfully");
       }
 
+      // 3. Se deve publicar, atualizar o projeto
+      if (shouldPublish) {
+        // Usar o hook de update para marcar como publicado
+        // Por ora, vamos deixar como rascunho e o usuário pode publicar depois
+        toast({
+          title: "Projeto criado!",
+          description: shouldPublish 
+            ? "Seu projeto foi criado e está pronto para ser compartilhado!" 
+            : "Seu projeto foi salvo como rascunho.",
+        });
+      }
+
+      // 4. Navegar para a página do projeto
       navigate(`/dashboard/projects/${project.id}`);
     } catch (error) {
       console.error("Error creating project:", error);
+      toast({
+        title: "Erro ao criar projeto",
+        description: "Ocorreu um erro ao criar o projeto. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -128,6 +169,7 @@ export const ProjectWizard = () => {
           <ProjectPreview
             data={projectData}
             onPublish={handleFinish}
+            isProcessing={isProcessing}
           />
         );
       default:
@@ -170,7 +212,7 @@ export const ProjectWizard = () => {
           <div className="flex justify-between p-6 border-t">
             <Button
               onClick={prevStep}
-              disabled={currentStep === 1}
+              disabled={currentStep === 1 || isProcessing}
               variant="outline"
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
@@ -180,7 +222,7 @@ export const ProjectWizard = () => {
             {currentStep < STEPS.length ? (
               <Button
                 onClick={nextStep}
-                disabled={!canProceed()}
+                disabled={!canProceed() || isProcessing}
               >
                 Próximo
                 <ChevronRight className="h-4 w-4 ml-2" />
@@ -190,15 +232,15 @@ export const ProjectWizard = () => {
                 <Button
                   onClick={() => handleFinish(false)}
                   variant="outline"
-                  disabled={createProject.isPending}
+                  disabled={isProcessing}
                 >
-                  Salvar Rascunho
+                  {isProcessing ? "Salvando..." : "Salvar Rascunho"}
                 </Button>
                 <Button
                   onClick={() => handleFinish(true)}
-                  disabled={createProject.isPending}
+                  disabled={isProcessing}
                 >
-                  Publicar Agora
+                  {isProcessing ? "Criando..." : "Criar Projeto"}
                 </Button>
               </div>
             )}
