@@ -38,20 +38,30 @@ export const useFileUpload = () => {
         .from(bucket)
         .getPublicUrl(data.path);
 
-      // Store file metadata in database
-      const { data: mediaData, error: mediaError } = await supabase
-        .from("project_media")
-        .insert({
-          project_id: path.split("/")[0], // Assuming path format: projectId/filename
-          file_name: file.name,
-          file_url: urlData.publicUrl,
-          file_type: file.type,
-          file_size: file.size,
-        })
-        .select()
-        .single();
+      // Only store metadata if it's a project-specific upload
+      let mediaData = null;
+      if (path.includes('/') && path.split('/').length >= 2) {
+        const projectId = path.split("/")[0];
+        if (projectId && projectId !== bucket) {
+          const { data: metadata, error: mediaError } = await supabase
+            .from("project_media")
+            .insert({
+              project_id: projectId,
+              file_name: file.name,
+              file_url: urlData.publicUrl,
+              file_type: file.type,
+              file_size: file.size,
+            })
+            .select()
+            .single();
 
-      if (mediaError) throw mediaError;
+          if (mediaError) {
+            console.warn("Failed to store media metadata:", mediaError);
+          } else {
+            mediaData = metadata;
+          }
+        }
+      }
 
       toast({
         title: "Upload concluído!",
