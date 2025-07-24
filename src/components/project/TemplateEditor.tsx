@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,14 +7,21 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Check, Palette } from "lucide-react";
 import { useState } from "react";
 
-interface TemplateSelectorProps {
+interface TemplateEditorProps {
   selectedTemplateId?: string;
+  currentColors?: { primary: string; secondary: string };
   onSelectTemplate: (templateId: string) => void;
+  onUpdateColors: (colors: { primary: string; secondary: string }) => void;
 }
 
-export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: TemplateSelectorProps) => {
+export const TemplateEditor = ({ 
+  selectedTemplateId, 
+  currentColors = { primary: "#667eea", secondary: "#764ba2" },
+  onSelectTemplate,
+  onUpdateColors 
+}: TemplateEditorProps) => {
   const { data: templates, isLoading } = useTemplates();
-  const [customColors, setCustomColors] = useState({ primary: "#667eea", secondary: "#764ba2" });
+  const [customColors, setCustomColors] = useState(currentColors);
 
   if (isLoading) {
     return (
@@ -38,20 +45,8 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
 
   const categories = Object.keys(groupedTemplates);
 
-  const createCustomTemplate = () => {
-    const customTemplate = {
-      id: 'custom-' + Date.now(),
-      name: 'Personalizado',
-      description: 'Template personalizado com suas cores',
-      category: 'Smart',
-      config: {
-        effects: ['personalizado', 'gradiente'],
-        colors: {
-          background: `linear-gradient(135deg, ${customColors.primary} 0%, ${customColors.secondary} 100%)`
-        }
-      }
-    };
-    onSelectTemplate(customTemplate.id);
+  const applyCustomColors = () => {
+    onUpdateColors(customColors);
   };
 
   const renderTemplateCard = (template: any) => {
@@ -79,7 +74,6 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
             }}
           />
           <CardTitle className="text-lg">{template.name}</CardTitle>
-          <CardDescription>{template.description}</CardDescription>
         </CardHeader>
         
         <CardContent>
@@ -95,7 +89,7 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
             className="w-full" 
             variant={isSelected ? "default" : "outline"}
           >
-            {isSelected ? "Selecionado" : "Escolher Template"}
+            {isSelected ? "Selecionado" : "Escolher"}
           </Button>
         </CardContent>
       </Card>
@@ -105,11 +99,51 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Escolha um Template</h2>
+        <h2 className="text-xl font-bold mb-2">Editar Template e Cores</h2>
         <p className="text-muted-foreground">
-          Selecione um design para começar seu LinksGo
+          Altere o template ou personalize as cores
         </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Palette className="h-5 w-5" />
+            Cores Personalizadas
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium">Cor Principal</label>
+              <input
+                type="color"
+                value={customColors.primary}
+                onChange={(e) => setCustomColors({ ...customColors, primary: e.target.value })}
+                className="w-full h-10 rounded border"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Cor Secundária</label>
+              <input
+                type="color"
+                value={customColors.secondary}
+                onChange={(e) => setCustomColors({ ...customColors, secondary: e.target.value })}
+                className="w-full h-10 rounded border"
+              />
+            </div>
+          </div>
+          <div 
+            className="w-full h-24 rounded-md"
+            style={{ 
+              background: `linear-gradient(135deg, ${customColors.primary} 0%, ${customColors.secondary} 100%)`
+            }}
+          />
+          <Button onClick={applyCustomColors} className="w-full">
+            Aplicar Cores Personalizadas
+          </Button>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue={categories[0]} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
@@ -122,51 +156,6 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
 
         {categories.map((category) => (
           <TabsContent key={category} value={category} className="space-y-6">
-            {category === 'Smart' && (
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Palette className="h-5 w-5" />
-                    Criar Template Personalizado
-                  </CardTitle>
-                  <CardDescription>
-                    Escolha suas próprias cores para criar um template único
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium">Cor Principal</label>
-                      <input
-                        type="color"
-                        value={customColors.primary}
-                        onChange={(e) => setCustomColors({ ...customColors, primary: e.target.value })}
-                        className="w-full h-10 rounded border"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">Cor Secundária</label>
-                      <input
-                        type="color"
-                        value={customColors.secondary}
-                        onChange={(e) => setCustomColors({ ...customColors, secondary: e.target.value })}
-                        className="w-full h-10 rounded border"
-                      />
-                    </div>
-                  </div>
-                  <div 
-                    className="w-full h-24 rounded-md"
-                    style={{ 
-                      background: `linear-gradient(135deg, ${customColors.primary} 0%, ${customColors.secondary} 100%)`
-                    }}
-                  />
-                  <Button onClick={createCustomTemplate} className="w-full">
-                    Usar Cores Personalizadas
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {groupedTemplates[category]?.map(renderTemplateCard)}
             </div>

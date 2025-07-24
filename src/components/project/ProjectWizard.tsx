@@ -213,14 +213,25 @@ export const ProjectWizard = () => {
           </CardContent>
 
           <div className="flex justify-between p-6 border-t">
-            <Button
-              onClick={prevStep}
-              disabled={currentStep === 1 || isProcessing}
-              variant="outline"
-            >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Anterior
-            </Button>
+            <div className="space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/dashboard")}
+                disabled={isProcessing}
+              >
+                Cancelar
+              </Button>
+              {currentStep > 1 && (
+                <Button
+                  onClick={prevStep}
+                  disabled={isProcessing}
+                  variant="outline"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  Anterior
+                </Button>
+              )}
+            </div>
 
             {currentStep < STEPS.length ? (
               <Button

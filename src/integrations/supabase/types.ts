@@ -193,6 +193,8 @@ export type Database = {
       }
       templates: {
         Row: {
+          category: string | null
+          color_scheme: Json | null
           config: Json
           created_at: string
           description: string | null
@@ -200,8 +202,11 @@ export type Database = {
           is_active: boolean
           name: string
           preview_image: string | null
+          template_type: string | null
         }
         Insert: {
+          category?: string | null
+          color_scheme?: Json | null
           config?: Json
           created_at?: string
           description?: string | null
@@ -209,8 +214,11 @@ export type Database = {
           is_active?: boolean
           name: string
           preview_image?: string | null
+          template_type?: string | null
         }
         Update: {
+          category?: string | null
+          color_scheme?: Json | null
           config?: Json
           created_at?: string
           description?: string | null
@@ -218,6 +226,7 @@ export type Database = {
           is_active?: boolean
           name?: string
           preview_image?: string | null
+          template_type?: string | null
         }
         Relationships: []
       }

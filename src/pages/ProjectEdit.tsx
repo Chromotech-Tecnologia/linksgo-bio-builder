@@ -6,10 +6,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { ProjectBasicInfo } from "@/components/project/ProjectBasicInfo";
 import { ProjectMediaUpload } from "@/components/project/ProjectMediaUpload";
 import { ProjectLinksEditor } from "@/components/project/ProjectLinksEditor";
-import { ArrowLeft, Save, Eye } from "lucide-react";
+import { TemplateEditor } from "@/components/project/TemplateEditor";
+import { ArrowLeft, Save, Eye, Palette } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ProjectEdit = () => {
@@ -25,6 +28,8 @@ const ProjectEdit = () => {
     description: "",
     avatarUrl: "",
     backgroundUrl: "",
+    templateId: "",
+    isPublished: false,
   });
 
   const [linksData, setLinksData] = useState<any[]>([]);
@@ -38,6 +43,8 @@ const ProjectEdit = () => {
         description: project.description || "",
         avatarUrl: project.avatar_url || "",
         backgroundUrl: project.background_url || "",
+        templateId: project.template_id || "",
+        isPublished: project.is_published || false,
       });
     }
   }, [project]);
@@ -65,6 +72,8 @@ const ProjectEdit = () => {
         description: projectData.description,
         avatar_url: projectData.avatarUrl,
         background_url: projectData.backgroundUrl,
+        template_id: projectData.templateId,
+        is_published: projectData.isPublished,
         theme_config: Object.assign(
           project?.theme_config || {},
           {
@@ -157,26 +166,41 @@ const ProjectEdit = () => {
                   <p className="text-muted-foreground">{project.title}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => navigate(`/dashboard/projects/${id}`)}
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  Preview
-                </Button>
-                <Button onClick={handleSave} disabled={updateProject.isPending}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {updateProject.isPending ? "Salvando..." : "Salvar"}
-                </Button>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="published"
+                    checked={projectData.isPublished}
+                    onCheckedChange={(checked) => 
+                      setProjectData(prev => ({ ...prev, isPublished: checked }))
+                    }
+                  />
+                  <Label htmlFor="published">
+                    {projectData.isPublished ? "Publicado" : "Rascunho"}
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate(`/dashboard/projects/${id}`)}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    Preview
+                  </Button>
+                  <Button onClick={handleSave} disabled={updateProject.isPending}>
+                    <Save className="h-4 w-4 mr-2" />
+                    {updateProject.isPending ? "Salvando..." : "Salvar"}
+                  </Button>
+                </div>
               </div>
             </div>
           </CardHeader>
 
           <CardContent>
             <Tabs defaultValue="basic" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="basic">Informações</TabsTrigger>
+                <TabsTrigger value="template">Template</TabsTrigger>
                 <TabsTrigger value="media">Mídia</TabsTrigger>
                 <TabsTrigger value="links">Links</TabsTrigger>
               </TabsList>
@@ -185,6 +209,26 @@ const ProjectEdit = () => {
                 <ProjectBasicInfo
                   data={projectData}
                   onChange={(data) => setProjectData(prev => ({ ...prev, ...data }))}
+                />
+              </TabsContent>
+
+              <TabsContent value="template">
+                <TemplateEditor
+                  selectedTemplateId={projectData.templateId}
+                  currentColors={{
+                    primary: (project?.theme_config as any)?.colors?.primary || "#667eea",
+                    secondary: (project?.theme_config as any)?.colors?.secondary || "#764ba2"
+                  }}
+                  onSelectTemplate={(templateId) => 
+                    setProjectData(prev => ({ ...prev, templateId }))
+                  }
+                  onUpdateColors={(colors) => {
+                    const currentConfig = project?.theme_config || {};
+                    setProjectData(prev => ({ 
+                      ...prev,
+                      backgroundUrl: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`
+                    }));
+                  }}
                 />
               </TabsContent>
 

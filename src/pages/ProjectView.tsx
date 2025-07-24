@@ -114,10 +114,19 @@ const ProjectView = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-gradient-to-br from-purple-500 via-blue-500 to-purple-600 text-white rounded-lg overflow-hidden">
-                  <div className="p-6">
+                <div 
+                  className="text-white rounded-lg overflow-hidden relative"
+                  style={{
+                    background: project.background_url?.startsWith('linear-gradient') 
+                      ? project.background_url 
+                      : (project.theme_config as any)?.colors?.background 
+                      || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    minHeight: '400px'
+                  }}
+                >
+                  <div className="p-6 relative z-10">
                     {/* Background Image */}
-                    {project.background_url && (
+                    {project.background_url && !project.background_url.startsWith('linear-gradient') && (
                       <div className="absolute inset-0 opacity-20">
                         <img 
                           src={project.background_url} 
@@ -127,7 +136,7 @@ const ProjectView = () => {
                       </div>
                     )}
                     
-                    <div className="relative z-10 text-center space-y-6">
+                    <div className="relative z-20 text-center space-y-6">
                       {/* Avatar */}
                       <Avatar className="w-20 h-20 mx-auto border-4 border-white/20">
                         <AvatarImage src={project.avatar_url} />
