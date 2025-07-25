@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Heart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DynamicIcon } from "@/components/ui/dynamic-icon";
 
 const PublicLinksGo = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -148,8 +149,17 @@ const PublicLinksGo = () => {
                   variant="ghost"
                 >
                   <div className="flex items-center justify-between w-full">
-                    <span>{link.title}</span>
-                    <ExternalLink className="h-5 w-5 opacity-70 group-hover:opacity-100 transition-opacity" />
+                    <div className="flex items-center gap-3">
+                      {link.icon_name && (
+                        <DynamicIcon 
+                          name={link.icon_name} 
+                          className="h-5 w-5 opacity-80" 
+                          fallback={ExternalLink}
+                        />
+                      )}
+                      <span>{link.title}</span>
+                    </div>
+                    <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </Button>
               ))}

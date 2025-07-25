@@ -33,7 +33,10 @@ export const FileUploader = ({
       if (!file) return;
 
       try {
-        const result = await uploadFile(file, bucket, `${path}/${file.name}`);
+        // Create a unique filename to avoid conflicts
+        const fileExtension = file.name.split('.').pop();
+        const uniqueFileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExtension}`;
+        const result = await uploadFile(file, bucket, `${path}/${uniqueFileName}`, { upsert: true });
         onUploadComplete(result.url);
       } catch (error) {
         console.error("Upload error:", error);

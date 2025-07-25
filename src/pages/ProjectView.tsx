@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Edit, Share2, Eye, ExternalLink } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
+import { DynamicIcon } from "@/components/ui/dynamic-icon";
 
 const ProjectView = () => {
   const { id } = useParams<{ id: string }>();
@@ -154,18 +155,26 @@ const ProjectView = () => {
                       </div>
 
                       {/* Links */}
-                      <div className="space-y-2">
-                        {links?.slice(0, 3).map((link) => (
-                          <div 
-                            key={link.id}
-                            className="bg-white/10 backdrop-blur-sm rounded-lg p-3 hover:bg-white/20 transition-colors cursor-pointer"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium text-sm">{link.title}</span>
-                              <ExternalLink className="h-3 w-3 text-white/60" />
-                            </div>
-                          </div>
-                        ))}
+                       <div className="space-y-2">
+                         {links?.slice(0, 3).map((link) => (
+                           <div 
+                             key={link.id}
+                             className="bg-white/10 backdrop-blur-sm rounded-lg p-3 hover:bg-white/20 transition-colors cursor-pointer"
+                           >
+                             <div className="flex items-center justify-between">
+                               <div className="flex items-center gap-2">
+                                 {link.icon_name && (
+                                   <DynamicIcon 
+                                     name={link.icon_name} 
+                                     className="h-3 w-3 text-white/80" 
+                                   />
+                                 )}
+                                 <span className="font-medium text-sm">{link.title}</span>
+                               </div>
+                               <ExternalLink className="h-3 w-3 text-white/60" />
+                             </div>
+                           </div>
+                         ))}
                         {(links?.length || 0) > 3 && (
                           <div className="text-center text-white/60 text-xs">
                             +{(links?.length || 0) - 3} mais links
