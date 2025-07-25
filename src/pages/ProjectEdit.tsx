@@ -79,8 +79,7 @@ const ProjectEdit = () => {
           avatarUrl: projectData.avatarUrl,
           backgroundUrl: projectData.backgroundUrl,
           colors: {
-            ...(project?.theme_config as any)?.colors || {},
-            background: projectData.backgroundUrl
+            ...(project?.theme_config as any)?.colors || {}
           }
         },
       });
@@ -222,14 +221,39 @@ const ProjectEdit = () => {
                     primary: (project?.theme_config as any)?.colors?.primary || "#667eea",
                     secondary: (project?.theme_config as any)?.colors?.secondary || "#764ba2"
                   }}
-                  onSelectTemplate={(templateId) => 
-                    setProjectData(prev => ({ ...prev, templateId }))
-                  }
-                  onUpdateColors={(colors) => {
-                    setProjectData(prev => ({ 
-                      ...prev,
-                      backgroundUrl: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`
-                    }));
+                  onSelectTemplate={async (templateId) => {
+                    setProjectData(prev => ({ ...prev, templateId }));
+                    
+                    // Auto-save template selection
+                    if (id) {
+                      await updateProject.mutateAsync({
+                        id,
+                        template_id: templateId,
+                      });
+                    }
+                  }}
+                  onUpdateColors={async (colors) => {
+                    const updatedData = { 
+                      ...projectData,
+                      theme_config: {
+                        ...(project?.theme_config as any || {}),
+                        colors: {
+                          ...(project?.theme_config as any)?.colors || {},
+                          primary: colors.primary,
+                          secondary: colors.secondary,
+                          background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`
+                        }
+                      }
+                    };
+                    setProjectData(prev => ({ ...prev, ...updatedData }));
+                    
+                    // Auto-save colors
+                    if (id) {
+                      await updateProject.mutateAsync({
+                        id,
+                        theme_config: updatedData.theme_config,
+                      });
+                    }
                   }}
                 />
               </TabsContent>
