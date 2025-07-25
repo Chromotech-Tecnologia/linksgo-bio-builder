@@ -74,13 +74,15 @@ const ProjectEdit = () => {
         background_url: projectData.backgroundUrl,
         template_id: projectData.templateId,
         is_published: projectData.isPublished,
-        theme_config: Object.assign(
-          project?.theme_config || {},
-          {
-            avatarUrl: projectData.avatarUrl,
-            backgroundUrl: projectData.backgroundUrl,
+        theme_config: {
+          ...(project?.theme_config as any || {}),
+          avatarUrl: projectData.avatarUrl,
+          backgroundUrl: projectData.backgroundUrl,
+          colors: {
+            ...(project?.theme_config as any)?.colors || {},
+            background: projectData.backgroundUrl
           }
-        ),
+        },
       });
 
       // Update project links
@@ -209,6 +211,7 @@ const ProjectEdit = () => {
                 <ProjectBasicInfo
                   data={projectData}
                   onChange={(data) => setProjectData(prev => ({ ...prev, ...data }))}
+                  currentProjectId={id}
                 />
               </TabsContent>
 
@@ -223,7 +226,6 @@ const ProjectEdit = () => {
                     setProjectData(prev => ({ ...prev, templateId }))
                   }
                   onUpdateColors={(colors) => {
-                    const currentConfig = project?.theme_config || {};
                     setProjectData(prev => ({ 
                       ...prev,
                       backgroundUrl: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`

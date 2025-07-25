@@ -16,7 +16,7 @@ const ProjectView = () => {
   const { data: links } = useProjectLinks(id!);
 
   const handleShare = () => {
-    const url = `https://linksgo.app/${project?.slug}`;
+    const url = `https://linksgo.lovable.app/${project?.slug}`;
     navigator.clipboard.writeText(url);
     toast({
       title: "Link copiado!",
@@ -61,7 +61,7 @@ const ProjectView = () => {
     );
   }
 
-  const publicUrl = `https://linksgo.app/${project.slug}`;
+  const publicUrl = `https://linksgo.lovable.app/${project.slug}`;
 
   return (
     <div className="min-h-screen bg-background">

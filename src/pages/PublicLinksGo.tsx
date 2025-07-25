@@ -88,7 +88,10 @@ const PublicLinksGo = () => {
   }
 
   const config = project.theme_config as any;
-  const backgroundStyle = config?.colors?.background || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  const backgroundStyle = project.background_url?.startsWith('linear-gradient') 
+    ? project.background_url 
+    : config?.colors?.background 
+    || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
 
   return (
     <div 
@@ -96,7 +99,7 @@ const PublicLinksGo = () => {
       style={{ background: backgroundStyle }}
     >
       {/* Background Image */}
-      {project.background_url && (
+      {project.background_url && !project.background_url.startsWith('linear-gradient') && (
         <div className="absolute inset-0 opacity-20">
           <img 
             src={project.background_url} 

@@ -14,9 +14,10 @@ interface ProjectBasicInfoProps {
     description: string;
   };
   onChange: (data: Partial<{ title: string; slug: string; description: string }>) => void;
+  currentProjectId?: string;
 }
 
-export const ProjectBasicInfo = ({ data, onChange }: ProjectBasicInfoProps) => {
+export const ProjectBasicInfo = ({ data, onChange, currentProjectId }: ProjectBasicInfoProps) => {
   const [slugStatus, setSlugStatus] = useState<"checking" | "available" | "taken" | "invalid" | null>(null);
   const { user } = useAuth();
 
@@ -36,7 +37,7 @@ export const ProjectBasicInfo = ({ data, onChange }: ProjectBasicInfoProps) => {
     return slugRegex.test(slug) && slug.length >= 3 && slug.length <= 50;
   };
 
-  const checkSlugAvailability = async (slug: string) => {
+  const checkSlugAvailability = async (slug: string, currentProjectId?: string) => {
     if (!user || !slug || !validateSlug(slug)) {
       setSlugStatus("invalid");
       return;
@@ -45,12 +46,18 @@ export const ProjectBasicInfo = ({ data, onChange }: ProjectBasicInfoProps) => {
     setSlugStatus("checking");
 
     try {
-      const { data: existingProject } = await supabase
+      let query = supabase
         .from("projects")
         .select("id")
         .eq("slug", slug)
-        .eq("user_id", user.id)
-        .single();
+        .eq("user_id", user.id);
+
+      // If we're editing a project, exclude the current project from the check
+      if (currentProjectId) {
+        query = query.neq("id", currentProjectId);
+      }
+
+      const { data: existingProject } = await query.maybeSingle();
 
       setSlugStatus(existingProject ? "taken" : "available");
     } catch (error) {
@@ -61,12 +68,12 @@ export const ProjectBasicInfo = ({ data, onChange }: ProjectBasicInfoProps) => {
   useEffect(() => {
     if (data.slug) {
       const timeoutId = setTimeout(() => {
-        checkSlugAvailability(data.slug);
+        checkSlugAvailability(data.slug, currentProjectId);
       }, 500);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [data.slug, user]);
+  }, [data.slug, user, currentProjectId]);
 
   const handleTitleChange = (title: string) => {
     onChange({ title });
@@ -102,7 +109,7 @@ export const ProjectBasicInfo = ({ data, onChange }: ProjectBasicInfoProps) => {
           <Label htmlFor="slug">URL Personalizada *</Label>
           <div className="flex items-center">
             <span className="bg-muted px-3 py-2 rounded-l-md border border-r-0 text-sm text-muted-foreground">
-              linksgo.app/
+              linksgo.lovable.app/
             </span>
             <Input
               id="slug"
