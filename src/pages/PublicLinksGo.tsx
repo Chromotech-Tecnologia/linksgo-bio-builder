@@ -174,7 +174,7 @@ const PublicLinksGo = () => {
             </div>
             
             <Button
-              onClick={() => window.open('https://linksgo.lovable.app', '_blank')}
+              onClick={() => window.open('https://app.linksgo.com.br', '_blank')}
               variant="ghost"
               className="text-white/80 hover:text-white hover:bg-white/10 text-sm"
             >

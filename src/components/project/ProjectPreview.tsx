@@ -19,7 +19,7 @@ interface ProjectPreviewProps {
 }
 
 export const ProjectPreview = ({ data, onPublish, isProcessing = false }: ProjectPreviewProps) => {
-  const previewUrl = `https://linksgo.lovable.app/${data.slug}`;
+  const previewUrl = `https://app.linksgo.com.br/${data.slug}`;
 
   return (
     <div className="space-y-8">

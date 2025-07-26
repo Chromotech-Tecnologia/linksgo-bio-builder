@@ -109,7 +109,7 @@ export const ProjectBasicInfo = ({ data, onChange, currentProjectId }: ProjectBa
           <Label htmlFor="slug">URL Personalizada *</Label>
           <div className="flex items-center">
             <span className="bg-muted px-3 py-2 rounded-l-md border border-r-0 text-sm text-muted-foreground">
-              linksgo.lovable.app/
+              app.linksgo.com.br/
             </span>
             <Input
               id="slug"
