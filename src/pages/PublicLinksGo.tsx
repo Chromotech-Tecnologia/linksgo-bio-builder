@@ -145,7 +145,7 @@ const PublicLinksGo = () => {
                 <Button
                   key={link.id}
                   onClick={() => handleLinkClick(link.id, link.url)}
-                  className="w-full h-14 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 text-white font-medium text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
+                  className="w-full h-14 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 text-white hover:text-white font-medium text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
                   variant="ghost"
                 >
                   <div className="flex items-center justify-between w-full">
