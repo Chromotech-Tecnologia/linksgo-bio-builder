@@ -1,6 +1,7 @@
 import React, { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useProject, useUpdateProject } from "@/hooks/useProjects";
+import { useTemplates } from "@/hooks/useTemplates";
 import { useProjectLinks } from "@/hooks/useProjectLinks";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ const ProjectEdit = () => {
   const navigate = useNavigate();
   const { data: project, isLoading } = useProject(id!);
   const { data: links } = useProjectLinks(id!);
+  const { data: templates } = useTemplates();
   const updateProject = useUpdateProject();
 
   const [projectData, setProjectData] = useState({
@@ -222,13 +224,33 @@ const ProjectEdit = () => {
                     secondary: (project?.theme_config as any)?.colors?.secondary || "#764ba2"
                   }}
                   onSelectTemplate={async (templateId) => {
-                    setProjectData(prev => ({ ...prev, templateId }));
+                    // Find the selected template to get its colors
+                    const selectedTemplate = templates?.find(t => t.id === templateId);
+                    const templateColors = selectedTemplate?.color_scheme as any || {};
+                    const templateConfig = selectedTemplate?.config as any || {};
                     
-                    // Auto-save template selection
+                    const updatedThemeConfig = {
+                      ...(project?.theme_config as any || {}),
+                      colors: {
+                        ...(project?.theme_config as any)?.colors || {},
+                        primary: templateColors.primary || "#667eea",
+                        secondary: templateColors.secondary || "#764ba2",
+                        background: templateConfig.colors?.background || `linear-gradient(135deg, ${templateColors.primary || "#667eea"} 0%, ${templateColors.secondary || "#764ba2"} 100%)`
+                      }
+                    };
+                    
+                    setProjectData(prev => ({ 
+                      ...prev, 
+                      templateId,
+                      theme_config: updatedThemeConfig
+                    }));
+                    
+                    // Auto-save template selection with colors
                     if (id) {
                       await updateProject.mutateAsync({
                         id,
                         template_id: templateId,
+                        theme_config: updatedThemeConfig,
                       });
                     }
                   }}
