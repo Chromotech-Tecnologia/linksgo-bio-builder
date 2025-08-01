@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, ExternalLink, Edit, Trash2, BarChart3 } from 'lucide-react';
+import { Plus, ExternalLink, Edit, Trash2, BarChart3, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 
@@ -129,6 +129,15 @@ const Dashboard = () => {
             </p>
           </div>
           <div className="flex items-center gap-4">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate('/profile')}
+              className="gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              Perfil
+            </Button>
             <Button variant="outline" size="sm" onClick={signOut}>
               Sair
             </Button>
