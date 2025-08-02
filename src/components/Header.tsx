@@ -13,10 +13,11 @@ const Header = () => {
       <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
-            <div className="flex items-center justify-center w-8 h-8 bg-gradient-primary rounded-lg">
-              <Zap className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gradient">LinksGo</span>
+            <img 
+              src="/lovable-uploads/2fb17c2c-7b1b-4521-bf54-b081461411c8.png" 
+              alt="LinksGo" 
+              className="h-8 w-auto"
+            />
           </Link>
           
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
