@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Heart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DynamicIcon } from "@/components/ui/dynamic-icon";
+import { ProfessionalCardTemplate } from "@/components/templates/ProfessionalCardTemplate";
 
 const PublicLinksGo = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -89,6 +90,26 @@ const PublicLinksGo = () => {
   }
 
   const config = project.theme_config as any;
+  
+  // Check if this is a professional card template
+  if (config?.layout === 'professional_card') {
+    return (
+      <ProfessionalCardTemplate
+        data={{
+          title: project.title,
+          description: project.description,
+          avatar_url: project.avatar_url,
+          background_url: project.background_url,
+          theme_config: config,
+          project_links: project.project_links || [],
+          social_links: (config as any)?.social_links || []
+        }}
+        onLinkClick={handleLinkClick}
+      />
+    );
+  }
+
+  // Default template rendering
   const backgroundStyle = project.background_url?.startsWith('linear-gradient') 
     ? project.background_url 
     : config?.colors?.background 

@@ -9,8 +9,10 @@ import { ProjectBasicInfo } from "./ProjectBasicInfo";
 import { ProjectMediaUpload } from "./ProjectMediaUpload";
 import { ProjectLinksEditor } from "./ProjectLinksEditor";
 import { ProjectPreview } from "./ProjectPreview";
+import { ProfessionalCardEditor } from "../templates/ProfessionalCardEditor";
 import { useCreateProject } from "@/hooks/useProjects";
 import { useCreateProjectLink } from "@/hooks/useProjectLinks";
+import { useTemplates } from "@/hooks/useTemplates";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -19,7 +21,8 @@ const STEPS = [
   { id: 2, title: "Informações", description: "Dados básicos" },
   { id: 3, title: "Mídia", description: "Avatar e imagens" },
   { id: 4, title: "Links", description: "Adicione seus links" },
-  { id: 5, title: "Finalizar", description: "Revisar e publicar" },
+  { id: 5, title: "Personalização", description: "Customize o visual" },
+  { id: 6, title: "Finalizar", description: "Revisar e publicar" },
 ];
 
 export const ProjectWizard = () => {
@@ -33,11 +36,13 @@ export const ProjectWizard = () => {
     avatarUrl: "",
     backgroundUrl: "",
     links: [] as Array<{ title: string; url: string; iconName?: string }>,
+    themeConfig: {} as any,
   });
 
   const navigate = useNavigate();
   const createProject = useCreateProject();
   const createProjectLink = useCreateProjectLink();
+  const { data: templates } = useTemplates();
 
   const progress = (currentStep / STEPS.length) * 100;
 
@@ -89,6 +94,7 @@ export const ProjectWizard = () => {
         avatar_url: projectData.avatarUrl,
         background_url: projectData.backgroundUrl,
         theme_config: {
+          ...projectData.themeConfig,
           avatarUrl: projectData.avatarUrl,
           backgroundUrl: projectData.backgroundUrl,
         },
@@ -143,7 +149,17 @@ export const ProjectWizard = () => {
         return (
           <TemplateSelector
             selectedTemplateId={projectData.templateId}
-            onSelectTemplate={(templateId) => updateProjectData({ templateId })}
+            onSelectTemplate={(templateId) => {
+              const selectedTemplate = templates?.find(t => t.id === templateId);
+              const defaultThemeConfig = (selectedTemplate?.config as any)?.layout === 'professional_card' 
+                ? selectedTemplate.config 
+                : {};
+              
+              updateProjectData({ 
+                templateId,
+                themeConfig: defaultThemeConfig 
+              });
+            }}
           />
         );
       case 2:
@@ -168,6 +184,38 @@ export const ProjectWizard = () => {
           />
         );
       case 5:
+        const selectedTemplate = templates?.find(t => t.id === projectData.templateId);
+        const isProfessionalTemplate = (selectedTemplate?.config as any)?.layout === 'professional_card';
+        
+        if (isProfessionalTemplate) {
+          return (
+            <ProfessionalCardEditor
+              projectData={{
+                ...projectData,
+                theme_config: projectData.themeConfig,
+                project_links: projectData.links.map((link, index) => ({
+                  id: `temp_${index}`,
+                  title: link.title,
+                  url: link.url,
+                  icon_name: link.iconName,
+                  is_active: true,
+                  position: index
+                }))
+              }}
+              onUpdate={(data) => updateProjectData({ themeConfig: data.theme_config })}
+            />
+          );
+        } else {
+          return (
+            <div className="text-center py-12">
+              <h3 className="text-lg font-medium mb-2">Personalização Avançada</h3>
+              <p className="text-muted-foreground">
+                Este template não oferece opções de personalização avançada.
+              </p>
+            </div>
+          );
+        }
+      case 6:
         return (
           <ProjectPreview
             data={projectData}
