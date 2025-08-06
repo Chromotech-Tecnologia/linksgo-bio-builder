@@ -201,11 +201,12 @@ const ProjectEdit = () => {
 
           <CardContent>
             <Tabs defaultValue="basic" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="basic">Informações</TabsTrigger>
                 <TabsTrigger value="template">Template</TabsTrigger>
                 <TabsTrigger value="media">Mídia</TabsTrigger>
                 <TabsTrigger value="links">Links</TabsTrigger>
+                <TabsTrigger value="customization">Personalização</TabsTrigger>
               </TabsList>
 
               <TabsContent value="basic">
@@ -292,6 +293,55 @@ const ProjectEdit = () => {
                   links={linksData}
                   onChange={setLinksData}
                 />
+              </TabsContent>
+
+              <TabsContent value="customization">
+                {React.useMemo(() => {
+                  const selectedTemplate = templates?.find(t => t.id === projectData.templateId);
+                  const isProfessionalTemplate = (selectedTemplate?.config as any)?.layout === 'professional_card';
+                  
+                  if (isProfessionalTemplate) {
+                    const ProfessionalCardEditor = React.lazy(() => 
+                      import("@/components/templates/ProfessionalCardEditor").then(module => ({
+                        default: module.ProfessionalCardEditor
+                      }))
+                    );
+                    return (
+                      <React.Suspense fallback={<div>Carregando...</div>}>
+                        <ProfessionalCardEditor
+                          projectData={{
+                            ...project,
+                            project_links: links?.map((link, index) => ({
+                              id: link.id,
+                              title: link.title,
+                              url: link.url,
+                              icon_name: link.icon_name,
+                              is_active: true,
+                              position: index
+                            })) || []
+                          }}
+                          onUpdate={async (data) => {
+                            if (id) {
+                              await updateProject.mutateAsync({
+                                id,
+                                theme_config: data.theme_config,
+                              });
+                            }
+                          }}
+                        />
+                      </React.Suspense>
+                    );
+                  } else {
+                    return (
+                      <div className="text-center py-12">
+                        <h3 className="text-lg font-medium mb-2">Personalização Avançada</h3>
+                        <p className="text-muted-foreground">
+                          Este template não oferece opções de personalização avançada.
+                        </p>
+                      </div>
+                    );
+                  }
+                }, [templates, projectData.templateId, project, links, id, updateProject])}
               </TabsContent>
             </Tabs>
           </CardContent>

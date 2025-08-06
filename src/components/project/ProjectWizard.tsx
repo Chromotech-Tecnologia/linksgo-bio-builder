@@ -240,13 +240,18 @@ export const ProjectWizard = () => {
                 {STEPS.map((step) => (
                   <div
                     key={step.id}
-                    className={`text-center ${
+                    className={`text-center cursor-pointer transition-colors ${
                       step.id === currentStep
                         ? "text-primary font-medium"
                         : step.id < currentStep
-                        ? "text-muted-foreground"
+                        ? "text-muted-foreground hover:text-primary"
                         : "text-muted-foreground/50"
                     }`}
+                    onClick={() => {
+                      if (step.id < currentStep || step.id === currentStep) {
+                        setCurrentStep(step.id);
+                      }
+                    }}
                   >
                     <div className="font-medium">{step.title}</div>
                     <div className="text-xs">{step.description}</div>
@@ -254,59 +259,61 @@ export const ProjectWizard = () => {
                 ))}
               </div>
             </div>
+            
+            {/* Navigation buttons moved here */}
+            <div className="flex justify-between pt-4 border-t">
+              <div className="space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/dashboard")}
+                  disabled={isProcessing}
+                >
+                  Cancelar
+                </Button>
+                {currentStep > 1 && (
+                  <Button
+                    onClick={prevStep}
+                    disabled={isProcessing}
+                    variant="outline"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-2" />
+                    Anterior
+                  </Button>
+                )}
+              </div>
+
+              {currentStep < STEPS.length ? (
+                <Button
+                  onClick={nextStep}
+                  disabled={!canProceed() || isProcessing}
+                >
+                  Próximo
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                </Button>
+              ) : (
+                <div className="space-x-2">
+                  <Button
+                    onClick={() => handleFinish(false)}
+                    variant="outline"
+                    disabled={isProcessing}
+                  >
+                    {isProcessing ? "Salvando..." : "Salvar Rascunho"}
+                  </Button>
+                  <Button
+                    onClick={() => handleFinish(true)}
+                    disabled={isProcessing}
+                  >
+                    {isProcessing ? "Criando..." : "Criar Projeto"}
+                  </Button>
+                </div>
+              )}
+            </div>
           </CardHeader>
 
           <CardContent className="min-h-[500px]">
             {renderStepContent()}
           </CardContent>
 
-          <div className="flex justify-between p-6 border-t">
-            <div className="space-x-2">
-              <Button
-                variant="outline"
-                onClick={() => navigate("/dashboard")}
-                disabled={isProcessing}
-              >
-                Cancelar
-              </Button>
-              {currentStep > 1 && (
-                <Button
-                  onClick={prevStep}
-                  disabled={isProcessing}
-                  variant="outline"
-                >
-                  <ChevronLeft className="h-4 w-4 mr-2" />
-                  Anterior
-                </Button>
-              )}
-            </div>
-
-            {currentStep < STEPS.length ? (
-              <Button
-                onClick={nextStep}
-                disabled={!canProceed() || isProcessing}
-              >
-                Próximo
-                <ChevronRight className="h-4 w-4 ml-2" />
-              </Button>
-            ) : (
-              <div className="space-x-2">
-                <Button
-                  onClick={() => handleFinish(false)}
-                  variant="outline"
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? "Salvando..." : "Salvar Rascunho"}
-                </Button>
-                <Button
-                  onClick={() => handleFinish(true)}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? "Criando..." : "Criar Projeto"}
-                </Button>
-              </div>
-            )}
-          </div>
         </Card>
       </div>
     </div>

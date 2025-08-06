@@ -6,6 +6,7 @@ import { useTemplates } from "@/hooks/useTemplates";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Check, Palette } from "lucide-react";
 import { useState } from "react";
+import { Switch } from "@/components/ui/switch";
 
 interface TemplateSelectorProps {
   selectedTemplateId?: string;
@@ -15,6 +16,7 @@ interface TemplateSelectorProps {
 export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: TemplateSelectorProps) => {
   const { data: templates, isLoading } = useTemplates();
   const [customColors, setCustomColors] = useState({ primary: "#667eea", secondary: "#764ba2" });
+  const [isGradient, setIsGradient] = useState(true);
 
   if (isLoading) {
     return (
@@ -36,7 +38,11 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
     return acc;
   }, {} as Record<string, any[]>) || {};
 
-  const categories = Object.keys(groupedTemplates);
+  // Order categories: Empresarial, Personalizado, Smart
+  const categoryOrder = ['Empresarial', 'Personalizado', 'Smart'];
+  const categories = categoryOrder.filter(cat => 
+    cat === 'Personalizado' || groupedTemplates[cat]?.length > 0
+  );
 
   const createCustomTemplate = () => {
     const customTemplate = {
@@ -52,6 +58,16 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
       }
     };
     onSelectTemplate(customTemplate.id);
+  };
+
+  const getTemplateTitle = (template: any) => {
+    if (template.category === 'Smart') {
+      const colorScheme = template.color_scheme as any;
+      if (colorScheme?.primary && colorScheme?.secondary) {
+        return `${colorScheme.primary} / ${colorScheme.secondary}`;
+      }
+    }
+    return template.name;
   };
 
   const renderTemplateCard = (template: any) => {
@@ -78,7 +94,7 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
               background: config?.colors?.background || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
             }}
           />
-          <CardTitle className="text-lg">{template.name}</CardTitle>
+          <CardTitle className="text-lg">{getTemplateTitle(template)}</CardTitle>
           <CardDescription>{template.description}</CardDescription>
         </CardHeader>
         
@@ -112,7 +128,7 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
       </div>
 
       <Tabs defaultValue={categories[0]} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           {categories.map((category) => (
             <TabsTrigger key={category} value={category}>
               {category}
@@ -122,7 +138,7 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
 
         {categories.map((category) => (
           <TabsContent key={category} value={category} className="space-y-6">
-            {category === 'Smart' && (
+            {category === 'Personalizado' && (
               <Card className="mb-6">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -134,7 +150,39 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Switch
+                      id="gradient-mode"
+                      checked={isGradient}
+                      onCheckedChange={setIsGradient}
+                    />
+                    <label htmlFor="gradient-mode" className="text-sm font-medium">
+                      {isGradient ? "Cor Gradiente" : "Cor Sólida"}
+                    </label>
+                  </div>
+                  
+                  {isGradient ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium">Cor Principal</label>
+                        <input
+                          type="color"
+                          value={customColors.primary}
+                          onChange={(e) => setCustomColors({ ...customColors, primary: e.target.value })}
+                          className="w-full h-10 rounded border"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium">Cor Secundária</label>
+                        <input
+                          type="color"
+                          value={customColors.secondary}
+                          onChange={(e) => setCustomColors({ ...customColors, secondary: e.target.value })}
+                          className="w-full h-10 rounded border"
+                        />
+                      </div>
+                    </div>
+                  ) : (
                     <div>
                       <label className="text-sm font-medium">Cor Principal</label>
                       <input
@@ -144,20 +192,14 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
                         className="w-full h-10 rounded border"
                       />
                     </div>
-                    <div>
-                      <label className="text-sm font-medium">Cor Secundária</label>
-                      <input
-                        type="color"
-                        value={customColors.secondary}
-                        onChange={(e) => setCustomColors({ ...customColors, secondary: e.target.value })}
-                        className="w-full h-10 rounded border"
-                      />
-                    </div>
-                  </div>
+                  )}
+                  
                   <div 
                     className="w-full h-24 rounded-md"
                     style={{ 
-                      background: `linear-gradient(135deg, ${customColors.primary} 0%, ${customColors.secondary} 100%)`
+                      background: isGradient 
+                        ? `linear-gradient(135deg, ${customColors.primary} 0%, ${customColors.secondary} 100%)`
+                        : customColors.primary
                     }}
                   />
                   <Button onClick={createCustomTemplate} className="w-full">
