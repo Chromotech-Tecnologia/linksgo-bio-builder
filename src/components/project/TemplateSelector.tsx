@@ -60,11 +60,33 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
     onSelectTemplate(customTemplate.id);
   };
 
+  const getColorName = (hex: string) => {
+    const colorNames: Record<string, string> = {
+      '#667eea': 'Azul Violeta',
+      '#764ba2': 'Roxo',
+      '#f093fb': 'Rosa',
+      '#f5576c': 'Coral',
+      '#4facfe': 'Azul Claro',
+      '#00f2fe': 'Ciano',
+      '#43e97b': 'Verde',
+      '#38f9d7': 'Verde Água',
+      '#ffecd2': 'Pêssego',
+      '#fcb69f': 'Salmão',
+      '#a8edea': 'Menta',
+      '#fed6e3': 'Rosa Claro',
+      '#d299c2': 'Lilás',
+      '#fef9d3': 'Amarelo Claro'
+    };
+    return colorNames[hex] || hex;
+  };
+
   const getTemplateTitle = (template: any) => {
     if (template.category === 'Smart') {
       const colorScheme = template.color_scheme as any;
       if (colorScheme?.primary && colorScheme?.secondary) {
-        return `${colorScheme.primary} / ${colorScheme.secondary}`;
+        const primaryName = getColorName(colorScheme.primary);
+        const secondaryName = getColorName(colorScheme.secondary);
+        return `${primaryName} / ${secondaryName}`;
       }
     }
     return template.name;

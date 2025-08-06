@@ -130,7 +130,7 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
           <img
             src={avatar_url}
             alt={title}
-            className="w-20 h-20 rounded-lg object-cover border-4 border-white shadow-lg"
+            className="w-16 h-16 rounded object-cover border-4 border-white shadow-lg"
             style={{ aspectRatio: '1/1' }}
           />
           {/* Decorative elements */}

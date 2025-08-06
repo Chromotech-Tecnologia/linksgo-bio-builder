@@ -13,6 +13,7 @@ import { ProjectBasicInfo } from "@/components/project/ProjectBasicInfo";
 import { ProjectMediaUpload } from "@/components/project/ProjectMediaUpload";
 import { ProjectLinksEditor } from "@/components/project/ProjectLinksEditor";
 import { TemplateEditor } from "@/components/project/TemplateEditor";
+import { ProfessionalCardEditor } from "@/components/templates/ProfessionalCardEditor";
 import { ArrowLeft, Save, Eye, Palette } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -295,41 +296,34 @@ const ProjectEdit = () => {
                 />
               </TabsContent>
 
-              <TabsContent value="customization">
-                {React.useMemo(() => {
+                <TabsContent value="customization">
+                {(() => {
                   const selectedTemplate = templates?.find(t => t.id === projectData.templateId);
-                  const isProfessionalTemplate = (selectedTemplate?.config as any)?.layout === 'professional_card';
+                  const isProfessionalTemplate = selectedTemplate?.name === 'Professional Card';
                   
-                  if (isProfessionalTemplate) {
-                    const ProfessionalCardEditor = React.lazy(() => 
-                      import("@/components/templates/ProfessionalCardEditor").then(module => ({
-                        default: module.ProfessionalCardEditor
-                      }))
-                    );
+                  if (isProfessionalTemplate && project) {
                     return (
-                      <React.Suspense fallback={<div>Carregando...</div>}>
-                        <ProfessionalCardEditor
-                          projectData={{
-                            ...project,
-                            project_links: links?.map((link, index) => ({
-                              id: link.id,
-                              title: link.title,
-                              url: link.url,
-                              icon_name: link.icon_name,
-                              is_active: true,
-                              position: index
-                            })) || []
-                          }}
-                          onUpdate={async (data) => {
-                            if (id) {
-                              await updateProject.mutateAsync({
-                                id,
-                                theme_config: data.theme_config,
-                              });
-                            }
-                          }}
-                        />
-                      </React.Suspense>
+                      <ProfessionalCardEditor
+                        projectData={{
+                          ...project,
+                          project_links: links?.map((link, index) => ({
+                            id: link.id,
+                            title: link.title,
+                            url: link.url,
+                            icon_name: link.icon_name,
+                            is_active: true,
+                            position: index
+                          })) || []
+                        }}
+                        onUpdate={async (data) => {
+                          if (id) {
+                            await updateProject.mutateAsync({
+                              id,
+                              theme_config: data.theme_config,
+                            });
+                          }
+                        }}
+                      />
                     );
                   } else {
                     return (
@@ -341,7 +335,7 @@ const ProjectEdit = () => {
                       </div>
                     );
                   }
-                }, [templates, projectData.templateId, project, links, id, updateProject])}
+                })()}
               </TabsContent>
             </Tabs>
           </CardContent>
