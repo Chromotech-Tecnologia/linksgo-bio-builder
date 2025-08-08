@@ -202,9 +202,8 @@ const ProjectEdit = () => {
 
           <CardContent>
             <Tabs defaultValue="basic" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="basic">Informações</TabsTrigger>
-                <TabsTrigger value="template">Template</TabsTrigger>
                 <TabsTrigger value="media">Mídia</TabsTrigger>
                 <TabsTrigger value="links">Links</TabsTrigger>
                 <TabsTrigger value="customization">Personalização</TabsTrigger>
@@ -218,69 +217,6 @@ const ProjectEdit = () => {
                 />
               </TabsContent>
 
-              <TabsContent value="template">
-                <TemplateEditor
-                  selectedTemplateId={projectData.templateId}
-                  currentColors={{
-                    primary: (project?.theme_config as any)?.colors?.primary || "#667eea",
-                    secondary: (project?.theme_config as any)?.colors?.secondary || "#764ba2"
-                  }}
-                  onSelectTemplate={async (templateId) => {
-                    // Find the selected template to get its colors
-                    const selectedTemplate = templates?.find(t => t.id === templateId);
-                    const templateColors = selectedTemplate?.color_scheme as any || {};
-                    const templateConfig = selectedTemplate?.config as any || {};
-                    
-                    const updatedThemeConfig = {
-                      ...(project?.theme_config as any || {}),
-                      colors: {
-                        ...(project?.theme_config as any)?.colors || {},
-                        primary: templateColors.primary || "#667eea",
-                        secondary: templateColors.secondary || "#764ba2",
-                        background: templateConfig.colors?.background || `linear-gradient(135deg, ${templateColors.primary || "#667eea"} 0%, ${templateColors.secondary || "#764ba2"} 100%)`
-                      }
-                    };
-                    
-                    setProjectData(prev => ({ 
-                      ...prev, 
-                      templateId,
-                      theme_config: updatedThemeConfig
-                    }));
-                    
-                    // Auto-save template selection with colors
-                    if (id) {
-                      await updateProject.mutateAsync({
-                        id,
-                        template_id: templateId,
-                        theme_config: updatedThemeConfig,
-                      });
-                    }
-                  }}
-                  onUpdateColors={async (colors) => {
-                    const updatedData = { 
-                      ...projectData,
-                      theme_config: {
-                        ...(project?.theme_config as any || {}),
-                        colors: {
-                          ...(project?.theme_config as any)?.colors || {},
-                          primary: colors.primary,
-                          secondary: colors.secondary,
-                          background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`
-                        }
-                      }
-                    };
-                    setProjectData(prev => ({ ...prev, ...updatedData }));
-                    
-                    // Auto-save colors
-                    if (id) {
-                      await updateProject.mutateAsync({
-                        id,
-                        theme_config: updatedData.theme_config,
-                      });
-                    }
-                  }}
-                />
-              </TabsContent>
 
               <TabsContent value="media">
                 <ProjectMediaUpload
@@ -296,34 +232,47 @@ const ProjectEdit = () => {
                 />
               </TabsContent>
 
-                <TabsContent value="customization">
+              <TabsContent value="customization">
                 {(() => {
                   const selectedTemplate = templates?.find(t => t.id === projectData.templateId);
-                  const isProfessionalTemplate = selectedTemplate?.name === 'Professional Card';
+                  const isProfessionalTemplate = selectedTemplate?.name === 'Professional Card' || 
+                                               selectedTemplate?.category === 'Empresarial' ||
+                                               projectData.templateId?.includes('professional') ||
+                                               projectData.templateId?.includes('empresarial');
                   
                   if (isProfessionalTemplate && project) {
                     return (
-                      <ProfessionalCardEditor
-                        projectData={{
-                          ...project,
-                          project_links: links?.map((link, index) => ({
-                            id: link.id,
-                            title: link.title,
-                            url: link.url,
-                            icon_name: link.icon_name,
-                            is_active: true,
-                            position: index
-                          })) || []
-                        }}
-                        onUpdate={async (data) => {
-                          if (id) {
-                            await updateProject.mutateAsync({
-                              id,
-                              theme_config: data.theme_config,
-                            });
-                          }
-                        }}
-                      />
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-lg font-bold">Personalização Avançada</h3>
+                            <p className="text-muted-foreground">Personalize todos os aspectos do template</p>
+                          </div>
+                        </div>
+                        
+                        <ProfessionalCardEditor
+                          projectData={{
+                            ...project,
+                            project_links: links?.map((link, index) => ({
+                              id: link.id,
+                              title: link.title,
+                              url: link.url,
+                              icon_name: link.icon_name,
+                              is_active: true,
+                              position: index
+                            })) || []
+                          }}
+                          onUpdate={async (data) => {
+                            if (id) {
+                              await updateProject.mutateAsync({
+                                id,
+                                theme_config: data.theme_config,
+                                social_links: data.social_links
+                              });
+                            }
+                          }}
+                        />
+                      </div>
                     );
                   } else {
                     return (

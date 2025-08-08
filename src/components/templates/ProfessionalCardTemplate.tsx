@@ -15,6 +15,8 @@ interface ProfessionalCardTemplateProps {
         enabled: boolean;
         height?: string;
         border_radius?: string;
+        size?: string;
+        shape?: string;
       };
       buttons?: {
         gradient?: {
@@ -123,15 +125,19 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
         <div 
           className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center relative overflow-hidden"
           style={{
-            height: theme_config.hero_image.height || '120px',
+            height: theme_config.hero_image.height || '200px',
             borderRadius: theme_config.hero_image.border_radius || '0 0 24px 24px'
           }}
         >
           <img
             src={avatar_url}
             alt={title}
-            className="w-16 h-16 rounded object-cover border-4 border-white shadow-lg"
-            style={{ aspectRatio: '1/1' }}
+            className="object-cover border-4 border-white shadow-lg"
+            style={{ 
+              width: theme_config.hero_image.size || '120px',
+              height: theme_config.hero_image.size || '120px',
+              borderRadius: theme_config.hero_image.shape === 'square' ? '12px' : '50%'
+            }}
           />
           {/* Decorative elements */}
           <div className="absolute top-4 right-4 w-16 h-16 bg-blue-200 rounded-full opacity-30"></div>

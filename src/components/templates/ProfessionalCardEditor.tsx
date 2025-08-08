@@ -180,7 +180,7 @@ export const ProfessionalCardEditor = ({ projectData, onUpdate }: ProfessionalCa
               </div>
               
               <div>
-                <Label htmlFor="hero-height">Altura da Imagem Hero</Label>
+                <Label htmlFor="hero-height">Altura da Seção Hero</Label>
                 <Select
                   value={themeConfig.hero_image?.height || '200px'}
                   onValueChange={(value) => updateThemeConfig('hero_image.height', value)}
@@ -198,9 +198,43 @@ export const ProfessionalCardEditor = ({ projectData, onUpdate }: ProfessionalCa
               </div>
               
               <div>
-                <Label htmlFor="hero-radius">Bordas Arredondadas</Label>
+                <Label htmlFor="hero-size">Tamanho da Imagem</Label>
                 <Select
-                  value={themeConfig.hero_image?.border_radius || '0 0 40px 40px'}
+                  value={themeConfig.hero_image?.size || '120px'}
+                  onValueChange={(value) => updateThemeConfig('hero_image.size', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="80px">Pequena (80px)</SelectItem>
+                    <SelectItem value="100px">Média (100px)</SelectItem>
+                    <SelectItem value="120px">Grande (120px)</SelectItem>
+                    <SelectItem value="150px">Extra Grande (150px)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="hero-shape">Formato da Imagem</Label>
+                <Select
+                  value={themeConfig.hero_image?.shape || 'round'}
+                  onValueChange={(value) => updateThemeConfig('hero_image.shape', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="round">Redondo</SelectItem>
+                    <SelectItem value="square">Quadrado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="hero-radius">Bordas da Seção</Label>
+                <Select
+                  value={themeConfig.hero_image?.border_radius || '0 0 24px 24px'}
                   onValueChange={(value) => updateThemeConfig('hero_image.border_radius', value)}
                 >
                   <SelectTrigger>
@@ -208,9 +242,9 @@ export const ProfessionalCardEditor = ({ projectData, onUpdate }: ProfessionalCa
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="0">Sem bordas</SelectItem>
-                    <SelectItem value="0 0 20px 20px">Bordas pequenas</SelectItem>
-                    <SelectItem value="0 0 40px 40px">Bordas médias</SelectItem>
-                    <SelectItem value="0 0 60px 60px">Bordas grandes</SelectItem>
+                    <SelectItem value="0 0 12px 12px">Bordas pequenas</SelectItem>
+                    <SelectItem value="0 0 24px 24px">Bordas médias</SelectItem>
+                    <SelectItem value="0 0 40px 40px">Bordas grandes</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

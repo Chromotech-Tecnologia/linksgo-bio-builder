@@ -28,13 +28,29 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
     );
   }
 
-  // Group templates by category
+  // Group templates by category and remove duplicates
   const groupedTemplates = templates?.reduce((acc, template) => {
     const category = template.category || 'Smart';
     if (!acc[category]) {
       acc[category] = [];
     }
-    acc[category].push(template);
+    
+    // For Smart category, check for duplicates by color scheme
+    if (category === 'Smart') {
+      const colorScheme = template.color_scheme as any;
+      const isDuplicate = acc[category].some(existing => {
+        const existingColorScheme = existing.color_scheme as any;
+        return existingColorScheme?.primary === colorScheme?.primary && 
+               existingColorScheme?.secondary === colorScheme?.secondary;
+      });
+      
+      if (!isDuplicate) {
+        acc[category].push(template);
+      }
+    } else {
+      acc[category].push(template);
+    }
+    
     return acc;
   }, {} as Record<string, any[]>) || {};
 
