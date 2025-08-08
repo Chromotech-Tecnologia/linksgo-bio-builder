@@ -202,11 +202,10 @@ const ProjectEdit = () => {
 
           <CardContent>
             <Tabs defaultValue="basic" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="basic">Informações</TabsTrigger>
                 <TabsTrigger value="media">Mídia</TabsTrigger>
                 <TabsTrigger value="links">Links</TabsTrigger>
-                <TabsTrigger value="template">Template</TabsTrigger>
                 <TabsTrigger value="customization">Personalização</TabsTrigger>
               </TabsList>
 
@@ -233,18 +232,6 @@ const ProjectEdit = () => {
                 />
               </TabsContent>
 
-              <TabsContent value="template">
-                <TemplateEditor
-                  selectedTemplateId={projectData.templateId}
-                  onSelectTemplate={(templateId) => 
-                    setProjectData(prev => ({ ...prev, templateId }))
-                  }
-                  onUpdateColors={(colors) => {
-                    // Handle color update logic here if needed
-                    console.log("Colors updated:", colors);
-                  }}
-                />
-              </TabsContent>
 
               <TabsContent value="customization">
                 {(() => {
@@ -259,34 +246,52 @@ const ProjectEdit = () => {
                       <div className="space-y-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <h3 className="text-lg font-bold">Personalização Avançada</h3>
-                            <p className="text-muted-foreground">Personalize todos os aspectos do template</p>
+                            <h3 className="text-lg font-bold">Template Empresarial - Personalização</h3>
+                            <p className="text-muted-foreground">Customize o visual do seu template empresarial</p>
                           </div>
                         </div>
                         
-                        <ProfessionalCardEditor
-                          projectData={{
-                            ...project,
-                            project_links: links?.map((link, index) => ({
-                              id: link.id,
-                              title: link.title,
-                              url: link.url,
-                              icon_name: link.icon_name,
-                              is_active: true,
-                              position: index
-                            })) || [],
-                            social_links: (project as any).social_links || []
-                          }}
-                          onUpdate={async (data) => {
-                            if (id) {
-                              await updateProject.mutateAsync({
-                                id,
-                                theme_config: data.theme_config,
-                                social_links: data.social_links
-                              });
-                            }
-                          }}
-                        />
+                        <div className="grid grid-cols-1 gap-6">
+                          <div className="space-y-4">
+                            <h4 className="font-medium">Seleção de Template</h4>
+                            <TemplateEditor
+                              selectedTemplateId={projectData.templateId}
+                              onSelectTemplate={(templateId) => 
+                                setProjectData(prev => ({ ...prev, templateId }))
+                              }
+                              onUpdateColors={(colors) => {
+                                console.log("Colors updated:", colors);
+                              }}
+                            />
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <h4 className="font-medium">Personalização Visual</h4>
+                            <ProfessionalCardEditor
+                              projectData={{
+                                ...project,
+                                project_links: links?.map((link, index) => ({
+                                  id: link.id,
+                                  title: link.title,
+                                  url: link.url,
+                                  icon_name: link.icon_name,
+                                  is_active: true,
+                                  position: index
+                                })) || [],
+                                social_links: (project as any).social_links || []
+                              }}
+                              onUpdate={async (data) => {
+                                if (id) {
+                                  await updateProject.mutateAsync({
+                                    id,
+                                    theme_config: data.theme_config,
+                                    social_links: data.social_links
+                                  });
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
                       </div>
                     );
                   } else {
