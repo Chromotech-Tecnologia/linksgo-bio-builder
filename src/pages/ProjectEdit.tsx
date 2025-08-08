@@ -202,10 +202,11 @@ const ProjectEdit = () => {
 
           <CardContent>
             <Tabs defaultValue="basic" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="basic">Informações</TabsTrigger>
                 <TabsTrigger value="media">Mídia</TabsTrigger>
                 <TabsTrigger value="links">Links</TabsTrigger>
+                <TabsTrigger value="template">Template</TabsTrigger>
                 <TabsTrigger value="customization">Personalização</TabsTrigger>
               </TabsList>
 
@@ -229,6 +230,19 @@ const ProjectEdit = () => {
                 <ProjectLinksEditor
                   links={linksData}
                   onChange={setLinksData}
+                />
+              </TabsContent>
+
+              <TabsContent value="template">
+                <TemplateEditor
+                  selectedTemplateId={projectData.templateId}
+                  onSelectTemplate={(templateId) => 
+                    setProjectData(prev => ({ ...prev, templateId }))
+                  }
+                  onUpdateColors={(colors) => {
+                    // Handle color update logic here if needed
+                    console.log("Colors updated:", colors);
+                  }}
                 />
               </TabsContent>
 
@@ -260,7 +274,8 @@ const ProjectEdit = () => {
                               icon_name: link.icon_name,
                               is_active: true,
                               position: index
-                            })) || []
+                            })) || [],
+                            social_links: (project as any).social_links || []
                           }}
                           onUpdate={async (data) => {
                             if (id) {
