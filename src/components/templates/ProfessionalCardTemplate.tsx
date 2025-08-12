@@ -70,6 +70,8 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
     social_links = []
   } = data;
 
+  const socialLinksNormalized = (social_links && social_links.length > 0) ? social_links : ((theme_config as any)?.social_links || []);
+
   const handleLinkClick = (linkId: string, url: string) => {
     if (onLinkClick) {
       onLinkClick(linkId, url);
@@ -206,9 +208,9 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
         </div>
 
         {/* Social Icons Section */}
-        {social_links.length > 0 && (
+        {socialLinksNormalized.length > 0 && (
           <div className="flex justify-center space-x-4 mb-8">
-            {social_links.map((social) => (
+            {socialLinksNormalized.map((social) => (
               <button
                 key={social.id}
                 onClick={() => window.open(social.url, '_blank', 'noopener,noreferrer')}
