@@ -9,6 +9,13 @@ interface ProfessionalCardTemplateProps {
     background_url?: string;
     theme_config: {
       background_color?: string;
+      // Optional background gradient support
+      background?: {
+        gradient?: {
+          from: string;
+          to: string;
+        };
+      };
       title_color?: string;
       description_color?: string;
       hero_image?: {
@@ -116,10 +123,19 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
     <div 
       className="min-h-screen w-full flex flex-col"
       style={{
-        backgroundColor: theme_config.background_color || '#ffffff',
-        backgroundImage: background_url ? `url(${background_url})` : undefined,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        ...(background_url
+          ? {
+              backgroundImage: `url(${background_url})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }
+          : theme_config.background?.gradient
+          ? {
+              background: `linear-gradient(135deg, ${theme_config.background.gradient.from}, ${theme_config.background.gradient.to})`
+            }
+          : {
+              backgroundColor: theme_config.background_color || '#ffffff'
+            })
       }}
     >
       {/* Hero Image Section */}

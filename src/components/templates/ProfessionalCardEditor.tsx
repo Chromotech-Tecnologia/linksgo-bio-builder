@@ -108,7 +108,7 @@ export const ProfessionalCardEditor = ({ projectData, onUpdate }: ProfessionalCa
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">Editor de Template Profissional</h2>
+        <h2 className="text-2xl font-bold mb-2">Editor de Template Empresarial</h2>
         <p className="text-muted-foreground">Personalize todos os aspectos do seu template</p>
       </div>
 
@@ -128,36 +128,86 @@ export const ProfessionalCardEditor = ({ projectData, onUpdate }: ProfessionalCa
               <CardTitle>Configurações Gerais</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="bg-color">Cor de Fundo</Label>
-                <Input
-                  id="bg-color"
-                  type="color"
-                  value={themeConfig.background_color || '#ffffff'}
-                  onChange={(e) => updateThemeConfig('background_color', e.target.value)}
-                  className="w-20 h-10"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="title-color">Cor do Título</Label>
-                <Input
-                  id="title-color"
-                  type="color"
-                  value={themeConfig.title_color || '#1e40af'}
-                  onChange={(e) => updateThemeConfig('title_color', e.target.value)}
-                  className="w-20 h-10"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="desc-color">Cor da Descrição</Label>
-                <Input
-                  id="desc-color"
-                  type="color"
-                  value={themeConfig.description_color || '#64748b'}
-                  onChange={(e) => updateThemeConfig('description_color', e.target.value)}
-                  className="w-20 h-10"
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={!!themeConfig.background?.gradient}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        updateThemeConfig('background.gradient.from', themeConfig.background?.gradient?.from || themeConfig.background_color || '#667eea');
+                        updateThemeConfig('background.gradient.to', themeConfig.background?.gradient?.to || '#764ba2');
+                      } else {
+                        updateThemeConfig('background', {});
+                      }
+                    }}
+                  />
+                  <Label>Usar gradiente de fundo</Label>
+                </div>
+
+                {themeConfig.background?.gradient ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Gradiente - Cor Inicial</Label>
+                      <Input
+                        type="color"
+                        value={themeConfig.background?.gradient?.from || '#667eea'}
+                        onChange={(e) => updateThemeConfig('background.gradient.from', e.target.value)}
+                        className="w-20 h-10"
+                      />
+                    </div>
+                    <div>
+                      <Label>Gradiente - Cor Final</Label>
+                      <Input
+                        type="color"
+                        value={themeConfig.background?.gradient?.to || '#764ba2'}
+                        onChange={(e) => updateThemeConfig('background.gradient.to', e.target.value)}
+                        className="w-20 h-10"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <Label htmlFor="bg-color">Cor de Fundo</Label>
+                    <Input
+                      id="bg-color"
+                      type="color"
+                      value={themeConfig.background_color || '#ffffff'}
+                      onChange={(e) => updateThemeConfig('background_color', e.target.value)}
+                      className="w-20 h-10"
+                    />
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="title-color">Cor do Título</Label>
+                    <Input
+                      id="title-color"
+                      type="color"
+                      value={themeConfig.title_color || '#1e40af'}
+                      onChange={(e) => updateThemeConfig('title_color', e.target.value)}
+                      className="w-20 h-10"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="desc-color">Cor da Descrição</Label>
+                    <Input
+                      id="desc-color"
+                      type="color"
+                      value={themeConfig.description_color || '#64748b'}
+                      onChange={(e) => updateThemeConfig('description_color', e.target.value)}
+                      className="w-20 h-10"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  className="w-full h-20 rounded-md border"
+                  style={{
+                    background: themeConfig.background?.gradient
+                      ? `linear-gradient(135deg, ${themeConfig.background.gradient.from} 0%, ${themeConfig.background.gradient.to} 100%)`
+                      : themeConfig.background_color || '#ffffff'
+                  }}
                 />
               </div>
             </CardContent>
@@ -198,21 +248,20 @@ export const ProfessionalCardEditor = ({ projectData, onUpdate }: ProfessionalCa
               </div>
               
               <div>
-                <Label htmlFor="hero-size">Tamanho da Imagem</Label>
-                <Select
-                  value={themeConfig.hero_image?.size || '120px'}
-                  onValueChange={(value) => updateThemeConfig('hero_image.size', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="80px">Pequena (80px)</SelectItem>
-                    <SelectItem value="100px">Média (100px)</SelectItem>
-                    <SelectItem value="120px">Grande (120px)</SelectItem>
-                    <SelectItem value="150px">Extra Grande (150px)</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="hero-size">Tamanho da Imagem (px)</Label>
+                <Input
+                  id="hero-size"
+                  type="number"
+                  min={40}
+                  max={512}
+                  step={1}
+                  value={parseInt((themeConfig.hero_image?.size || '120px').replace('px',''))}
+                  onChange={(e) => {
+                    const val = Math.max(40, Math.min(512, Number(e.target.value) || 0));
+                    updateThemeConfig('hero_image.size', `${val}px`);
+                  }}
+                  className="w-32"
+                />
               </div>
               
               <div>

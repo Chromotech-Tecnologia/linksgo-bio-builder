@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { ProjectBasicInfo } from "@/components/project/ProjectBasicInfo";
 import { ProjectMediaUpload } from "@/components/project/ProjectMediaUpload";
 import { ProjectLinksEditor } from "@/components/project/ProjectLinksEditor";
@@ -36,6 +37,9 @@ const ProjectEdit = () => {
   });
 
   const [linksData, setLinksData] = useState<any[]>([]);
+  const [customColors, setCustomColors] = useState({ primary: '#667eea', secondary: '#764ba2' });
+  const [isGradient, setIsGradient] = useState(true);
+  const [bgCustomized, setBgCustomized] = useState(false);
 
   // Update local state when project data loads
   useEffect(() => {
@@ -68,6 +72,11 @@ const ProjectEdit = () => {
 
     try {
       // Update project basic info
+      const bgConfigApplied = bgCustomized ? {
+        background: isGradient ? { gradient: { from: customColors.primary, to: customColors.secondary } } : {},
+        background_color: !isGradient ? customColors.primary : (project?.theme_config as any)?.background_color,
+      } : {} as any;
+
       await updateProject.mutateAsync({
         id,
         title: projectData.title,
@@ -79,11 +88,9 @@ const ProjectEdit = () => {
         is_published: projectData.isPublished,
         theme_config: {
           ...(project?.theme_config as any || {}),
+          ...bgConfigApplied,
           avatarUrl: projectData.avatarUrl,
           backgroundUrl: projectData.backgroundUrl,
-          colors: {
-            ...(project?.theme_config as any)?.colors || {}
-          }
         },
       });
 
@@ -234,64 +241,114 @@ const ProjectEdit = () => {
 
 
               <TabsContent value="customization">
-                {(() => {
-                  const selectedTemplate = templates?.find(t => t.id === projectData.templateId);
-                  const isProfessionalTemplate = selectedTemplate?.name === 'Professional Card' || 
-                                               selectedTemplate?.category === 'Empresarial' ||
-                                               projectData.templateId?.includes('professional') ||
-                                               projectData.templateId?.includes('empresarial');
-                  
-                  if (isProfessionalTemplate && project) {
-                    return (
-                      <div className="space-y-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="text-lg font-bold">Editor de Template Empresarial</h3>
-                            <p className="text-muted-foreground">Personalize todos os aspectos do template empresarial</p>
+                <Tabs defaultValue="empresarial" className="space-y-6">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="empresarial">Empresarial</TabsTrigger>
+                    <TabsTrigger value="smart">Smart</TabsTrigger>
+                    <TabsTrigger value="personalizado">Personalizado</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="empresarial">
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-bold">Editor de Template Empresarial</h3>
+                          <p className="text-muted-foreground">Personalize todos os aspectos do template empresarial</p>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <ProfessionalCardEditor
+                          projectData={{
+                            ...project,
+                            project_links: links?.map((link, index) => ({
+                              id: link.id,
+                              title: link.title,
+                              url: link.url,
+                              icon_name: link.icon_name,
+                              is_active: true,
+                              position: index
+                            })) || [],
+                            social_links: (project as any).theme_config?.social_links || []
+                          }}
+                          onUpdate={async (data) => {
+                            if (id) {
+                              await updateProject.mutateAsync({
+                                id,
+                                theme_config: {
+                                  ...(project?.theme_config as any || {}),
+                                  ...data.theme_config,
+                                  social_links: data.social_links ?? (project?.theme_config as any)?.social_links ?? []
+                                }
+                              });
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="smart">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {templates?.filter(t => t.category === 'Smart').map((template) => {
+                        const isSelected = projectData.templateId === template.id;
+                        const config = template.config as any;
+                        return (
+                          <Card key={template.id} className={`cursor-pointer transition-all hover:shadow-lg ${isSelected ? 'ring-2 ring-primary' : ''}`}
+                                onClick={() => setProjectData(prev => ({ ...prev, templateId: template.id }))}>
+                            <CardHeader>
+                              <div className="w-full h-32 rounded-md mb-3" style={{ background: config?.colors?.background || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }} />
+                              <CardTitle className="text-lg">{template.name}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <Button className="w-full" variant={isSelected ? 'default' : 'outline'}>
+                                {isSelected ? 'Selecionado' : 'Escolher'}
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="personalizado">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Cor de Fundo</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="flex items-center space-x-2">
+                          <Switch id="bg-gradient" checked={isGradient} onCheckedChange={setIsGradient} />
+                          <Label htmlFor="bg-gradient">{isGradient ? 'Gradiente' : 'Cor Sólida'}</Label>
+                        </div>
+                        {isGradient ? (
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label>Cor Inicial</Label>
+                              <Input type="color" value={customColors.primary} onChange={(e) => setCustomColors({ ...customColors, primary: e.target.value })} className="w-20 h-10" />
+                            </div>
+                            <div>
+                              <Label>Cor Final</Label>
+                              <Input type="color" value={customColors.secondary} onChange={(e) => setCustomColors({ ...customColors, secondary: e.target.value })} className="w-20 h-10" />
+                            </div>
                           </div>
-                        </div>
-                        
-                        <div className="space-y-4">
-                          <ProfessionalCardEditor
-                            projectData={{
-                              ...project,
-                              project_links: links?.map((link, index) => ({
-                                id: link.id,
-                                title: link.title,
-                                url: link.url,
-                                icon_name: link.icon_name,
-                                is_active: true,
-                                position: index
-                              })) || [],
-                              social_links: (project as any).theme_config?.social_links || []
-                            }}
-                            onUpdate={async (data) => {
-                              if (id) {
-                                await updateProject.mutateAsync({
-                                  id,
-                                  theme_config: {
-                                    ...(project?.theme_config as any || {}),
-                                    ...data.theme_config,
-                                    social_links: data.social_links ?? (project?.theme_config as any)?.social_links ?? []
-                                  }
-                                });
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div className="text-center py-12">
-                        <h3 className="text-lg font-medium mb-2">Personalização Avançada</h3>
-                        <p className="text-muted-foreground">
-                          Este template não oferece opções de personalização avançada.
-                        </p>
-                      </div>
-                    );
-                  }
-                })()}
+                        ) : (
+                          <div>
+                            <Label>Cor</Label>
+                            <Input type="color" value={customColors.primary} onChange={(e) => setCustomColors({ ...customColors, primary: e.target.value })} className="w-20 h-10" />
+                          </div>
+                        )}
+                        <div className="w-full h-20 rounded-md border" style={{ background: isGradient ? `linear-gradient(135deg, ${customColors.primary} 0%, ${customColors.secondary} 100%)` : customColors.primary }} />
+                        <Button
+                          onClick={() => {
+                            setBgCustomized(true);
+                          }}
+                        >
+                          Aplicar ao Projeto (salve para confirmar)
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
             </Tabs>
           </CardContent>
