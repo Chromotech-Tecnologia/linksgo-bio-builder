@@ -30,6 +30,7 @@ const socialPlatforms = [
   { name: 'LinkedIn', icon: 'linkedin' },
   { name: 'YouTube', icon: 'youtube' },
   { name: 'WhatsApp', icon: 'whatsapp' },
+  { name: 'Local', icon: 'map-pin' },
   { name: 'TikTok', icon: 'music' },
   { name: 'Website', icon: 'globe' },
   { name: 'Email', icon: 'mail' },
@@ -471,6 +472,24 @@ export const ProfessionalCardEditor = ({ projectData, onUpdate }: ProfessionalCa
                     type="color"
                     value={themeConfig.social_icons?.icon_color || '#ffffff'}
                     onChange={(e) => updateThemeConfig('social_icons.icon_color', e.target.value)}
+                    className="w-20 h-10"
+                  />
+                </div>
+                <div>
+                  <Label>Gradiente - Cor Inicial</Label>
+                  <Input
+                    type="color"
+                    value={themeConfig.social_icons?.gradient?.from || '#3b82f6'}
+                    onChange={(e) => updateThemeConfig('social_icons.gradient.from', e.target.value)}
+                    className="w-20 h-10"
+                  />
+                </div>
+                <div>
+                  <Label>Gradiente - Cor Final</Label>
+                  <Input
+                    type="color"
+                    value={themeConfig.social_icons?.gradient?.to || '#60a5fa'}
+                    onChange={(e) => updateThemeConfig('social_icons.gradient.to', e.target.value)}
                     className="w-20 h-10"
                   />
                 </div>

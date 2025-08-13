@@ -39,6 +39,10 @@ interface ProfessionalCardTemplateProps {
         background_color?: string;
         icon_color?: string;
         size?: string;
+        gradient?: {
+          from: string;
+          to: string;
+        };
       };
     };
     project_links: Array<{
@@ -89,9 +93,10 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
   };
 
   const getButtonStyle = (link: any) => {
-    if (link.gradient) {
+    const gradient = link.gradient || theme_config.buttons?.gradient;
+    if (gradient) {
       return {
-        background: `linear-gradient(135deg, ${link.gradient.from}, ${link.gradient.to})`,
+        background: `linear-gradient(135deg, ${gradient.from}, ${gradient.to})`,
         color: link.text_color || theme_config.buttons?.text_color || '#ffffff',
         borderRadius: theme_config.buttons?.border_radius || '12px',
         border: 'none'
@@ -99,26 +104,40 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
     }
     
     return {
-      backgroundColor: link.background_color || theme_config.buttons?.gradient?.from || '#1e40af',
+      backgroundColor: link.background_color || '#1e40af',
       color: link.text_color || theme_config.buttons?.text_color || '#ffffff',
       borderRadius: theme_config.buttons?.border_radius || '12px',
       border: 'none'
     };
   };
 
-  const getSocialIconStyle = (social: any) => ({
-    backgroundColor: social.background_color || theme_config.social_icons?.background_color || '#3b82f6',
-    color: social.icon_color || theme_config.social_icons?.icon_color || '#ffffff',
-    width: theme_config.social_icons?.size || '48px',
-    height: theme_config.social_icons?.size || '48px',
-    borderRadius: '8px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease'
-  });
+  const getSocialIconStyle = (social: any) => {
+    const gradient = (social as any)?.gradient || theme_config.social_icons?.gradient;
+    const base = {
+      color: social.icon_color || theme_config.social_icons?.icon_color || '#ffffff',
+      width: theme_config.social_icons?.size || '48px',
+      height: theme_config.social_icons?.size || '48px',
+      borderRadius: '8px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: 'none',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease'
+    } as React.CSSProperties;
+
+    if (gradient?.from && gradient?.to) {
+      return {
+        ...base,
+        background: `linear-gradient(135deg, ${gradient.from}, ${gradient.to})`
+      };
+    }
+
+    return {
+      ...base,
+      backgroundColor: social.background_color || theme_config.social_icons?.background_color || '#3b82f6'
+    };
+  };
 
   return (
     <div 
@@ -192,7 +211,7 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
                 className="w-full flex items-center justify-between p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
                 style={getButtonStyle(link)}
               >
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 min-w-0">
                   {link.icon_name && (
                     <DynamicIcon
                       name={link.icon_name}
@@ -202,7 +221,7 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
                       }}
                     />
                   )}
-                  <span className="font-medium">{link.title}</span>
+                  <span className="font-medium truncate">{link.title}</span>
                 </div>
                 <DynamicIcon
                   name="chevron-right"

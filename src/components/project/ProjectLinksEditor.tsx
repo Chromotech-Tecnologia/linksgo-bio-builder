@@ -23,7 +23,7 @@ interface ProjectLinksEditorProps {
 
 const POPULAR_ICONS = [
   { name: "Instagram", value: "instagram" },
-  { name: "WhatsApp", value: "message-circle" },
+  { name: "WhatsApp", value: "whatsapp" },
   { name: "YouTube", value: "youtube" },
   { name: "LinkedIn", value: "linkedin" },
   { name: "TikTok", value: "music" },
@@ -32,6 +32,7 @@ const POPULAR_ICONS = [
   { name: "Email", value: "mail" },
   { name: "Telefone", value: "phone" },
   { name: "Website", value: "globe" },
+  { name: "Local", value: "map-pin" },
   { name: "Loja", value: "shopping-bag" },
   { name: "Portfolio", value: "briefcase" },
 ];
@@ -222,11 +223,11 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
                               <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
                             </div>
                             
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <h4 className="font-medium">{link.title}</h4>
+                                <h4 className="font-medium truncate flex-1 min-w-0">{link.title}</h4>
                                 {link.iconName && (
-                                  <Badge variant="secondary" className="text-xs">
+                                  <Badge variant="secondary" className="text-xs shrink-0">
                                     {POPULAR_ICONS.find(i => i.value === link.iconName)?.name || link.iconName}
                                   </Badge>
                                 )}
