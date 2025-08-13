@@ -282,6 +282,23 @@ export const ProfessionalCardEditor = ({ projectData, onUpdate }: ProfessionalCa
               </div>
               
               <div>
+                <Label htmlFor="hero-img-radius">Bordas da Imagem (px)</Label>
+                <Input
+                  id="hero-img-radius"
+                  type="number"
+                  min={0}
+                  max={64}
+                  step={1}
+                  value={parseInt((themeConfig.hero_image?.image_border_radius || '12px').replace('px',''))}
+                  onChange={(e) => {
+                    const val = Math.max(0, Math.min(64, Number(e.target.value) || 0));
+                    updateThemeConfig('hero_image.image_border_radius', `${val}px`);
+                  }}
+                  className="w-32"
+                />
+              </div>
+              
+              <div>
                 <Label htmlFor="hero-radius">Bordas da Seção</Label>
                 <Select
                   value={themeConfig.hero_image?.border_radius || '0 0 24px 24px'}

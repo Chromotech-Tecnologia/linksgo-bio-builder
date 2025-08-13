@@ -22,6 +22,7 @@ interface ProfessionalCardTemplateProps {
         enabled: boolean;
         height?: string;
         border_radius?: string;
+        image_border_radius?: string;
         size?: string;
         shape?: string;
       };
@@ -141,10 +142,11 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
       {/* Hero Image Section */}
       {theme_config.hero_image?.enabled && avatar_url && (
         <div 
-          className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center relative overflow-hidden"
+          className="w-full flex items-center justify-center relative overflow-hidden"
           style={{
             height: theme_config.hero_image.height || '200px',
-            borderRadius: theme_config.hero_image.border_radius || '0 0 24px 24px'
+            borderRadius: theme_config.hero_image.border_radius || '0 0 24px 24px',
+            background: 'transparent'
           }}
         >
           <img
@@ -154,29 +156,19 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
             style={{ 
               width: theme_config.hero_image.shape === 'real' ? (theme_config.hero_image.size || '120px') : (theme_config.hero_image.size || '120px'),
               height: theme_config.hero_image.shape === 'real' ? 'auto' : (theme_config.hero_image.size || '120px'),
-              borderRadius: theme_config.hero_image.shape === 'square' ? '12px' : (theme_config.hero_image.shape === 'real' ? '0px' : '50%')
+              borderRadius: (theme_config.hero_image.shape === 'square' || theme_config.hero_image.shape === 'real') 
+                ? (theme_config.hero_image.image_border_radius || '12px') 
+                : '50%'
             }}
           />
-          {/* Decorative elements */}
-          <div className="absolute top-4 right-4 w-16 h-16 bg-blue-200 rounded-full opacity-30"></div>
-          <div className="absolute bottom-4 left-4 w-12 h-12 bg-indigo-200 rounded-full opacity-40"></div>
         </div>
       )}
 
       {/* Content Section */}
-      <div className="flex-1 px-6 py-8 max-w-md mx-auto w-full">
-        {/* Title and Description */}
-        <div className="text-center mb-8">
-          <h1 
-            className="text-2xl font-bold mb-3"
-            style={{ 
-              color: theme_config.title_color || '#1e40af',
-              fontSize: '24px'
-            }}
-          >
-            {title}
-          </h1>
-          {description && (
+      <div className="flex-1 px-6 pt-4 pb-8 max-w-md mx-auto w-full">
+        {/* Description (project title removed) */}
+        {description && (
+          <div className="text-center mb-4">
             <p 
               className="text-sm leading-relaxed"
               style={{ 
@@ -186,8 +178,8 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
             >
               {description}
             </p>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Links Section */}
         <div className="space-y-3 mb-8">
