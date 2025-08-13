@@ -150,11 +150,11 @@ export const ProfessionalCardTemplate = ({ data, onLinkClick }: ProfessionalCard
           <img
             src={avatar_url}
             alt={title}
-            className="object-cover border-4 border-white shadow-lg"
+            className={theme_config.hero_image.shape === 'real' ? "object-contain border-4 border-white shadow-lg" : "object-cover border-4 border-white shadow-lg"}
             style={{ 
-              width: theme_config.hero_image.size || '120px',
-              height: theme_config.hero_image.size || '120px',
-              borderRadius: theme_config.hero_image.shape === 'square' ? '12px' : '50%'
+              width: theme_config.hero_image.shape === 'real' ? (theme_config.hero_image.size || '120px') : (theme_config.hero_image.size || '120px'),
+              height: theme_config.hero_image.shape === 'real' ? 'auto' : (theme_config.hero_image.size || '120px'),
+              borderRadius: theme_config.hero_image.shape === 'square' ? '12px' : (theme_config.hero_image.shape === 'real' ? '0px' : '50%')
             }}
           />
           {/* Decorative elements */}

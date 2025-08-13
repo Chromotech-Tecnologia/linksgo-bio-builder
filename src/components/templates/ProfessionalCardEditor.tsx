@@ -276,6 +276,7 @@ export const ProfessionalCardEditor = ({ projectData, onUpdate }: ProfessionalCa
                   <SelectContent>
                     <SelectItem value="round">Redondo</SelectItem>
                     <SelectItem value="square">Quadrado</SelectItem>
+                    <SelectItem value="real">Tamanho real</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
