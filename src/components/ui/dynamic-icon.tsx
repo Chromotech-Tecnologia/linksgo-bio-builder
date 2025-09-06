@@ -21,6 +21,8 @@ export const DynamicIcon = ({ name, fallback: Fallback, ...props }: DynamicIconP
   }
 
   if (!Icon) {
+    // Log the missing icon for debugging
+    console.warn(`Icon "${name}" (converted to "${iconName}") not found in lucide-react`);
     // Return a default icon if the requested icon is not found
     const DefaultIcon = icons.Circle as React.ComponentType<LucideProps>;
     return <DefaultIcon {...props} />;
