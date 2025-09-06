@@ -7,6 +7,23 @@ interface DynamicIconProps extends LucideProps {
 }
 
 export const DynamicIcon = ({ name, fallback: Fallback, ...props }: DynamicIconProps) => {
+  // Handle custom telegram icon
+  if (name === 'telegram') {
+    return (
+      <div 
+        className="inline-flex items-center justify-center"
+        style={{ 
+          width: props.size || 24, 
+          height: props.size || 24,
+          backgroundImage: 'url(/lovable-uploads/70261896-0b87-47f7-a317-c7cbc0ba9362.png)',
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center'
+        }}
+      />
+    );
+  }
+
   // Convert kebab-case to PascalCase for lucide icon names
   const iconName = name
     .split('-')
