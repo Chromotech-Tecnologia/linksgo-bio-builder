@@ -20,8 +20,7 @@ const commonIcons = [
   'smartphone', 'mail', 'globe', 'phone', 'map-pin', 'calendar',
   'facebook', 'instagram', 'twitter', 'linkedin', 'youtube', 'whatsapp',
   'download', 'shopping-cart', 'heart', 'star', 'camera', 'music',
-  'video', 'file-text', 'book', 'briefcase', 'users', 'coffee',
-  'telegram'
+  'video', 'file-text', 'book', 'briefcase', 'users', 'coffee'
 ];
 
 const socialPlatforms = [
