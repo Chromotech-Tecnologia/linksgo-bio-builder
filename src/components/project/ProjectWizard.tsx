@@ -159,8 +159,12 @@ export const ProjectWizard = () => {
               selectedTemplateId={projectData.templateId}
               onSelectTemplate={(templateId) => {
                 const selected = templates?.find(t => t.id === templateId);
-                const defaultThemeConfig = (selected?.config as any)?.layout === 'professional_card' 
-                  ? selected!.config 
+                const selectedConfig = selected?.config as any;
+                const defaultThemeConfig = selectedConfig?.layout === 'professional_card' 
+                  ? { 
+                      ...selectedConfig,
+                      layout: 'professional_card' // Ensure layout is explicitly set
+                    }
                   : {};
                 updateProjectData({ templateId, themeConfig: defaultThemeConfig });
               }}
@@ -180,7 +184,14 @@ export const ProjectWizard = () => {
                       position: index
                     }))
                   }}
-                  onUpdate={(data) => updateProjectData({ themeConfig: data.theme_config })}
+                  onUpdate={(data) => {
+                    updateProjectData({ 
+                      themeConfig: { 
+                        ...data.theme_config, 
+                        layout: 'professional_card' // Ensure layout stays set
+                      }
+                    });
+                  }}
                 />
               </div>
             )}
