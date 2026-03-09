@@ -43,7 +43,9 @@ export const TemplateEditor = ({
     return acc;
   }, {} as Record<string, any[]>) || {};
 
-  const categories = Object.keys(groupedTemplates);
+  // Order categories: Empresarial, Negócios, Personalizado, Smart
+  const categoryOrder = ['Empresarial', 'Negócios', 'Personalizado', 'Smart'];
+  const categories = categoryOrder.filter(cat => groupedTemplates[cat]?.length > 0);
 
   const applyCustomColors = () => {
     onUpdateColors(customColors);
@@ -146,7 +148,7 @@ export const TemplateEditor = ({
       </Card>
 
       <Tabs defaultValue={categories[0]} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className={`grid w-full ${categories.length === 4 ? 'grid-cols-4' : categories.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
           {categories.map((category) => (
             <TabsTrigger key={category} value={category}>
               {category}
