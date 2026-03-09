@@ -63,6 +63,7 @@ const ProjectEdit = () => {
         title: link.title,
         url: link.url,
         iconName: link.icon_name,
+        bannerImageUrl: (link as any).banner_image_url,
       })));
     }
   }, [links]);
