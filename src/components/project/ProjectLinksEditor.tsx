@@ -87,6 +87,8 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
       url: formData.url,
       iconName: formData.iconName || undefined,
       bannerImageUrl: formData.bannerImageUrl || undefined,
+      hideTitle: formData.hideTitle || undefined,
+      hideImage: formData.hideImage || undefined,
       id: editingIndex !== null ? links[editingIndex].id : crypto.randomUUID(),
     };
 
