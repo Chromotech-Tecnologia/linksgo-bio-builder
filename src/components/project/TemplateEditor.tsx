@@ -148,7 +148,7 @@ export const TemplateEditor = ({
       </Card>
 
       <Tabs defaultValue={categories[0]} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className={`grid w-full ${categories.length === 4 ? 'grid-cols-4' : categories.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
           {categories.map((category) => (
             <TabsTrigger key={category} value={category}>
               {category}
