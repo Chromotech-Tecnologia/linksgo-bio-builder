@@ -143,6 +143,7 @@ export type Database = {
       }
       project_links: {
         Row: {
+          banner_image_url: string | null
           click_count: number
           created_at: string
           icon_name: string | null
@@ -155,6 +156,7 @@ export type Database = {
           url: string
         }
         Insert: {
+          banner_image_url?: string | null
           click_count?: number
           created_at?: string
           icon_name?: string | null
@@ -167,6 +169,7 @@ export type Database = {
           url: string
         }
         Update: {
+          banner_image_url?: string | null
           click_count?: number
           created_at?: string
           icon_name?: string | null

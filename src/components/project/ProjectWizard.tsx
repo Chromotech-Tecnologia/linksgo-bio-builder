@@ -38,7 +38,7 @@ export const ProjectWizard = () => {
     description: "",
     avatarUrl: "",
     backgroundUrl: "",
-    links: [] as Array<{ title: string; url: string; iconName?: string }>,
+    links: [] as Array<{ title: string; url: string; iconName?: string; bannerImageUrl?: string }>,
     themeConfig: {} as any,
   });
 
@@ -116,6 +116,7 @@ export const ProjectWizard = () => {
             title: link.title,
             url: link.url.startsWith('http') ? link.url : `https://${link.url}`,
             icon_name: link.iconName,
+            banner_image_url: link.bannerImageUrl,
             position: i,
           });
         }

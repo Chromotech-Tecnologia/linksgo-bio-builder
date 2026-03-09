@@ -7,6 +7,7 @@ interface BannerLink {
   icon_name?: string;
   is_active: boolean;
   banner_image?: string;
+  banner_image_url?: string;
   banner_color?: string;
   text_color?: string;
   subtitle?: string;
@@ -38,27 +39,14 @@ interface BannerCardTemplateProps {
   onLinkClick?: (linkId: string, url: string) => void;
 }
 
-// Default banner colors for different link types
-const getBannerStyle = (link: BannerLink, index: number, themeConfig: BannerCardTemplateProps['data']['theme_config']) => {
-  const defaultColors = [
-    { bg: 'linear-gradient(135deg, #dc2626, #ef4444)', text: '#ffffff' },
-    { bg: 'linear-gradient(135deg, #eab308, #fbbf24)', text: '#1f2937' },
-    { bg: 'linear-gradient(135deg, #16a34a, #22c55e)', text: '#ffffff' },
-    { bg: 'linear-gradient(135deg, #2563eb, #3b82f6)', text: '#ffffff' },
-    { bg: 'linear-gradient(135deg, #9333ea, #a855f7)', text: '#ffffff' },
-  ];
+const DEFAULT_GRADIENTS = [
+  { bg: 'linear-gradient(135deg, #dc2626, #ef4444)', text: '#ffffff' },
+  { bg: 'linear-gradient(135deg, #eab308, #fbbf24)', text: '#1f2937' },
+  { bg: 'linear-gradient(135deg, #16a34a, #22c55e)', text: '#ffffff' },
+  { bg: 'linear-gradient(135deg, #2563eb, #3b82f6)', text: '#ffffff' },
+  { bg: 'linear-gradient(135deg, #9333ea, #a855f7)', text: '#ffffff' },
+];
 
-  const colorSet = defaultColors[index % defaultColors.length];
-
-  return {
-    background: link.banner_color || colorSet.bg,
-    color: link.text_color || colorSet.text,
-    borderRadius: themeConfig.banner_style?.border_radius || '16px',
-    boxShadow: themeConfig.banner_style?.shadow !== false ? '0 4px 15px rgba(0,0,0,0.2)' : 'none',
-  };
-};
-
-// Get icon based on link content
 const getSmartIcon = (link: BannerLink): string => {
   const title = link.title.toLowerCase();
   const url = link.url.toLowerCase();
@@ -77,12 +65,7 @@ const getSmartIcon = (link: BannerLink): string => {
 };
 
 export const BannerCardTemplate = ({ data, onLinkClick }: BannerCardTemplateProps) => {
-  const {
-    title,
-    avatar_url,
-    theme_config,
-    project_links,
-  } = data;
+  const { title, avatar_url, theme_config, project_links } = data;
 
   const handleLinkClick = (linkId: string, url: string) => {
     if (onLinkClick) {
@@ -94,47 +77,32 @@ export const BannerCardTemplate = ({ data, onLinkClick }: BannerCardTemplateProp
 
   const logoSize = theme_config.logo_size || '100px';
   const logoShape = theme_config.logo_shape || 'circle';
+  const borderRadius = theme_config.banner_style?.border_radius || '16px';
+  const bannerHeight = theme_config.banner_style?.height || '100px';
 
-  const getLogoStyle = () => {
-    const baseStyle = {
-      width: logoSize,
-      height: logoSize,
-      objectFit: 'cover' as const,
-    };
-
+  const getLogoRadius = () => {
     switch (logoShape) {
-      case 'square':
-        return { ...baseStyle, borderRadius: '0' };
-      case 'rounded':
-        return { ...baseStyle, borderRadius: '16px' };
-      case 'circle':
-      default:
-        return { ...baseStyle, borderRadius: '50%' };
+      case 'square': return '0';
+      case 'rounded': return '16px';
+      default: return '50%';
     }
   };
 
   return (
     <div 
       className="min-h-screen w-full flex flex-col"
-      style={{
-        backgroundColor: theme_config.background_color || '#f5f5f5',
-      }}
+      style={{ backgroundColor: theme_config.background_color || '#f5f5f5' }}
     >
-      {/* Header with Logo */}
+      {/* Header */}
       <div className="flex flex-col items-center pt-8 pb-4 px-4">
         {avatar_url && (
           <div 
             className="border-4 border-white shadow-xl overflow-hidden"
-            style={getLogoStyle()}
+            style={{ width: logoSize, height: logoSize, borderRadius: getLogoRadius() }}
           >
-            <img
-              src={avatar_url}
-              alt={title}
-              className="w-full h-full object-cover"
-            />
+            <img src={avatar_url} alt={title} className="w-full h-full object-cover" />
           </div>
         )}
-        
         <h1 
           className="text-2xl font-bold mt-4 text-center"
           style={{ color: theme_config.title_color || '#1f2937' }}
@@ -149,7 +117,9 @@ export const BannerCardTemplate = ({ data, onLinkClick }: BannerCardTemplateProp
           {project_links
             .filter(link => link.is_active)
             .map((link, index) => {
-              const bannerStyle = getBannerStyle(link, index, theme_config);
+              const bannerImageUrl = link.banner_image_url || link.banner_image;
+              const hasBannerImage = !!bannerImageUrl;
+              const colorSet = DEFAULT_GRADIENTS[index % DEFAULT_GRADIENTS.length];
               const iconName = getSmartIcon(link);
 
               return (
@@ -158,53 +128,61 @@ export const BannerCardTemplate = ({ data, onLinkClick }: BannerCardTemplateProp
                   onClick={() => handleLinkClick(link.id, link.url)}
                   className="w-full relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
                   style={{
-                    ...bannerStyle,
-                    minHeight: theme_config.banner_style?.height || '80px',
-                    padding: '16px 20px',
+                    background: hasBannerImage ? '#000' : (link.banner_color || colorSet.bg),
+                    color: link.text_color || '#ffffff',
+                    borderRadius,
+                    boxShadow: theme_config.banner_style?.shadow !== false ? '0 4px 15px rgba(0,0,0,0.2)' : 'none',
+                    minHeight: bannerHeight,
                   }}
                 >
-                  {/* Banner Image Background (if provided) */}
-                  {link.banner_image && (
+                  {/* Full background image */}
+                  {hasBannerImage && (
                     <div 
-                      className="absolute inset-0 opacity-30"
+                      className="absolute inset-0"
                       style={{
-                        backgroundImage: `url(${link.banner_image})`,
+                        backgroundImage: `url(${bannerImageUrl})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
+                        borderRadius,
                       }}
-                    />
+                    >
+                      {/* Dark overlay for text legibility */}
+                      <div 
+                        className="absolute inset-0 bg-gradient-to-r from-black/50 to-black/20"
+                        style={{ borderRadius }}
+                      />
+                    </div>
                   )}
 
                   {/* Content */}
-                  <div className="relative z-10 flex items-center justify-between w-full">
+                  <div className="relative z-10 flex items-center justify-between w-full p-4">
                     <div className="flex items-center gap-4">
                       <div 
-                        className="w-12 h-12 rounded-full flex items-center justify-center"
+                        className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
                         style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
                       >
-                        <DynamicIcon
-                          name={iconName}
-                          className="w-6 h-6"
-                        />
+                        <DynamicIcon name={iconName} className="w-6 h-6" />
                       </div>
                       <div className="text-left">
-                        <span className="font-bold text-lg block">{link.title}</span>
+                        <span 
+                          className="font-bold text-lg block"
+                          style={{ textShadow: hasBannerImage ? '0 1px 4px rgba(0,0,0,0.5)' : 'none' }}
+                        >
+                          {link.title}
+                        </span>
                         {link.subtitle && (
                           <span className="text-sm opacity-80">{link.subtitle}</span>
                         )}
                       </div>
                     </div>
-                    <DynamicIcon
-                      name="chevron-right"
-                      className="w-6 h-6 opacity-70"
-                    />
+                    <DynamicIcon name="chevron-right" className="w-6 h-6 opacity-70" />
                   </div>
                 </button>
               );
             })}
         </div>
 
-        {/* Footer with LinksGo Logo */}
+        {/* Footer */}
         <div className="text-center pt-8 mt-8 border-t border-gray-200">
           <p className="text-xs text-gray-500 mb-2">O seu link para todas as conexões!</p>
           <div className="flex items-center justify-center">

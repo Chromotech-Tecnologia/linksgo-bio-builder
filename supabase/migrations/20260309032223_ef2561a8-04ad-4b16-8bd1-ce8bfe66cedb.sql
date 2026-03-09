@@ -1,0 +1,1 @@
+ALTER TABLE public.project_links ADD COLUMN banner_image_url text;
