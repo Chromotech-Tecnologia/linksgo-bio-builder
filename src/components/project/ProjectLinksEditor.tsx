@@ -198,6 +198,32 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
                   />
                 </div>
 
+                <div className="space-y-3 pt-4 border-t">
+                  <Label className="text-base font-semibold">Opções de Visibilidade</Label>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="hide-link-title">Ocultar Título</Label>
+                      <p className="text-xs text-muted-foreground">O título não será exibido no banner</p>
+                    </div>
+                    <Switch
+                      id="hide-link-title"
+                      checked={formData.hideTitle}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, hideTitle: checked }))}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="hide-link-image">Ocultar Ícone</Label>
+                      <p className="text-xs text-muted-foreground">O ícone não será exibido no banner</p>
+                    </div>
+                    <Switch
+                      id="hide-link-image"
+                      checked={formData.hideImage}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, hideImage: checked }))}
+                    />
+                  </div>
+                </div>
+
                 <Button 
                   onClick={handleSubmit} 
                   className="w-full"
