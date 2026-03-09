@@ -54,8 +54,8 @@ export const TemplateSelector = ({ selectedTemplateId, onSelectTemplate }: Templ
     return acc;
   }, {} as Record<string, any[]>) || {};
 
-  // Order categories: Empresarial, Personalizado, Smart
-  const categoryOrder = ['Empresarial', 'Personalizado', 'Smart'];
+  // Order categories: Empresarial, Negócios, Personalizado, Smart
+  const categoryOrder = ['Empresarial', 'Negócios', 'Personalizado', 'Smart'];
   const categories = categoryOrder.filter(cat => 
     cat === 'Personalizado' || groupedTemplates[cat]?.length > 0
   );
