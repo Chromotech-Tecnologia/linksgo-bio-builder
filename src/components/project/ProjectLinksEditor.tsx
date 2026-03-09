@@ -8,12 +8,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, ExternalLink, GripVertical, Trash2, Edit } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { FileUploader } from "./FileUploader";
 
 interface Link {
   id?: string;
   title: string;
   url: string;
   iconName?: string;
+  bannerImageUrl?: string;
 }
 
 interface ProjectLinksEditorProps {
@@ -44,10 +46,11 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
     title: "",
     url: "",
     iconName: "",
+    bannerImageUrl: "",
   });
 
   const resetForm = () => {
-    setFormData({ title: "", url: "", iconName: "" });
+    setFormData({ title: "", url: "", iconName: "", bannerImageUrl: "" });
     setEditingIndex(null);
   };
 
@@ -62,6 +65,7 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
       title: link.title,
       url: link.url,
       iconName: link.iconName || "",
+      bannerImageUrl: link.bannerImageUrl || "",
     });
     setEditingIndex(index);
     setIsDialogOpen(true);
@@ -70,8 +74,11 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
   const handleSubmit = () => {
     if (!formData.title || !formData.url) return;
 
-    const newLink = {
-      ...formData,
+    const newLink: Link = {
+      title: formData.title,
+      url: formData.url,
+      iconName: formData.iconName || undefined,
+      bannerImageUrl: formData.bannerImageUrl || undefined,
       id: editingIndex !== null ? links[editingIndex].id : crypto.randomUUID(),
     };
 
@@ -103,13 +110,6 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
     onChange(reorderedLinks);
   };
 
-  const formatUrl = (url: string) => {
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-      return `https://${url}`;
-    }
-    return url;
-  };
-
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <div className="text-center mb-8">
@@ -129,7 +129,7 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
                 Adicionar Link
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {editingIndex !== null ? "Editar Link" : "Adicionar Novo Link"}
@@ -173,6 +173,19 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Imagem do Banner (opcional)</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Adicione uma imagem de fundo para o banner deste link
+                  </p>
+                  <FileUploader
+                    onUploadComplete={(url) => setFormData(prev => ({ ...prev, bannerImageUrl: url }))}
+                    currentImage={formData.bannerImageUrl}
+                    bucket="projects"
+                    path="banners"
+                  />
                 </div>
 
                 <Button 
@@ -223,6 +236,14 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
                               <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
                             </div>
                             
+                            {link.bannerImageUrl && (
+                              <img 
+                                src={link.bannerImageUrl} 
+                                alt="" 
+                                className="w-12 h-12 rounded object-cover shrink-0"
+                              />
+                            )}
+
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
                                 <h4 className="font-medium truncate flex-1 min-w-0">{link.title}</h4>
@@ -273,7 +294,7 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
           <ul className="text-sm text-muted-foreground space-y-1">
             <li>• Arraste os links para reordená-los</li>
             <li>• Use títulos descritivos e URLs completas</li>
-            <li>• Os ícones ajudam na identificação rápida</li>
+            <li>• Adicione imagens de banner para um visual mais atrativo</li>
           </ul>
         </div>
       )}
