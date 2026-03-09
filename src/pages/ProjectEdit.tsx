@@ -97,6 +97,8 @@ const ProjectEdit = () => {
           ...bgConfigApplied,
           avatarUrl: projectData.avatarUrl,
           backgroundUrl: projectData.backgroundUrl,
+          hide_title: projectData.hideTitle,
+          hide_avatar: projectData.hideAvatar,
         },
       });
 
