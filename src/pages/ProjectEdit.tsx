@@ -34,6 +34,8 @@ const ProjectEdit = () => {
     backgroundUrl: "",
     templateId: "",
     isPublished: false,
+    hideTitle: false,
+    hideAvatar: false,
   });
 
   const [linksData, setLinksData] = useState<any[]>([]);
