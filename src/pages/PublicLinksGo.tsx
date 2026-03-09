@@ -181,26 +181,46 @@ const PublicLinksGo = () => {
               ?.filter((link: any) => link.is_active)
               ?.sort((a: any, b: any) => a.position - b.position)
               ?.map((link: any) => (
-                <Button
+                <button
                   key={link.id}
                   onClick={() => handleLinkClick(link.id, link.url)}
-                  className="w-full h-14 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 text-white hover:text-white font-medium text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
-                  variant="ghost"
+                  className={`w-full relative overflow-hidden rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg group ${
+                    link.banner_image_url ? 'h-24' : 'h-14'
+                  }`}
+                  style={{
+                    background: link.banner_image_url ? '#000' : 'rgba(255,255,255,0.15)',
+                    border: link.banner_image_url ? 'none' : '1px solid rgba(255,255,255,0.2)',
+                  }}
                 >
-                  <div className="flex items-center justify-between w-full">
+                  {link.banner_image_url && (
+                    <div className="absolute inset-0">
+                      <img 
+                        src={link.banner_image_url} 
+                        alt="" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/20" />
+                    </div>
+                  )}
+                  <div className="relative z-10 flex items-center justify-between w-full h-full px-4">
                     <div className="flex items-center gap-3">
                       {link.icon_name && (
                         <DynamicIcon 
                           name={link.icon_name} 
-                          className="h-5 w-5 opacity-80" 
+                          className="h-5 w-5 opacity-80 text-white" 
                           fallback={ExternalLink}
                         />
                       )}
-                      <span>{link.title}</span>
+                      <span 
+                        className="font-medium text-lg text-white"
+                        style={{ textShadow: link.banner_image_url ? '0 1px 4px rgba(0,0,0,0.5)' : 'none' }}
+                      >
+                        {link.title}
+                      </span>
                     </div>
-                    <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" />
+                    <ExternalLink className="h-4 w-4 text-white opacity-70 group-hover:opacity-100 transition-opacity" />
                   </div>
-                </Button>
+                </button>
               ))}
           </div>
 
