@@ -28,6 +28,8 @@ interface BannerCardTemplateProps {
       business_type?: string;
       logo_shape?: 'circle' | 'square' | 'rounded';
       logo_size?: string;
+      hide_title?: boolean;
+      hide_avatar?: boolean;
       banner_style?: {
         height?: string;
         border_radius?: string;
