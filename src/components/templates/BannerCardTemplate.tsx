@@ -11,6 +11,8 @@ interface BannerLink {
   banner_color?: string;
   text_color?: string;
   subtitle?: string;
+  hide_title?: boolean;
+  hide_icon?: boolean;
 }
 
 interface BannerCardTemplateProps {
