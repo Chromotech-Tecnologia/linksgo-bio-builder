@@ -28,6 +28,8 @@ interface BannerCardTemplateProps {
       business_type?: string;
       logo_shape?: 'circle' | 'square' | 'rounded';
       logo_size?: string;
+      hide_title?: boolean;
+      hide_avatar?: boolean;
       banner_style?: {
         height?: string;
         border_radius?: string;
@@ -95,7 +97,7 @@ export const BannerCardTemplate = ({ data, onLinkClick }: BannerCardTemplateProp
     >
       {/* Header */}
       <div className="flex flex-col items-center pt-8 pb-4 px-4">
-        {avatar_url && (
+        {avatar_url && !theme_config.hide_avatar && (
           <div 
             className="border-4 border-white shadow-xl overflow-hidden"
             style={{ width: logoSize, height: logoSize, borderRadius: getLogoRadius() }}
@@ -103,12 +105,14 @@ export const BannerCardTemplate = ({ data, onLinkClick }: BannerCardTemplateProp
             <img src={avatar_url} alt={title} className="w-full h-full object-cover" />
           </div>
         )}
-        <h1 
-          className="text-2xl font-bold mt-4 text-center"
-          style={{ color: theme_config.title_color || '#1f2937' }}
-        >
-          {title}
-        </h1>
+        {!theme_config.hide_title && (
+          <h1 
+            className="text-2xl font-bold mt-4 text-center"
+            style={{ color: theme_config.title_color || '#1f2937' }}
+          >
+            {title}
+          </h1>
+        )}
       </div>
 
       {/* Banner Links */}

@@ -34,6 +34,8 @@ const ProjectEdit = () => {
     backgroundUrl: "",
     templateId: "",
     isPublished: false,
+    hideTitle: false,
+    hideAvatar: false,
   });
 
   const [linksData, setLinksData] = useState<any[]>([]);
@@ -44,6 +46,7 @@ const ProjectEdit = () => {
   // Update local state when project data loads
   useEffect(() => {
     if (project) {
+      const config = project.theme_config as any;
       setProjectData({
         title: project.title,
         slug: project.slug,
@@ -52,6 +55,8 @@ const ProjectEdit = () => {
         backgroundUrl: project.background_url || "",
         templateId: project.template_id || "",
         isPublished: project.is_published || false,
+        hideTitle: config?.hide_title || false,
+        hideAvatar: config?.hide_avatar || false,
       });
     }
   }, [project]);
@@ -92,6 +97,8 @@ const ProjectEdit = () => {
           ...bgConfigApplied,
           avatarUrl: projectData.avatarUrl,
           backgroundUrl: projectData.backgroundUrl,
+          hide_title: projectData.hideTitle,
+          hide_avatar: projectData.hideAvatar,
         },
       });
 
@@ -223,6 +230,7 @@ const ProjectEdit = () => {
                   data={projectData}
                   onChange={(data) => setProjectData(prev => ({ ...prev, ...data }))}
                   currentProjectId={id}
+                  showVisibilityToggles
                 />
               </TabsContent>
 

@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { AlertCircle, Check } from "lucide-react";
@@ -12,12 +13,15 @@ interface ProjectBasicInfoProps {
     title: string;
     slug: string;
     description: string;
+    hideTitle?: boolean;
+    hideAvatar?: boolean;
   };
-  onChange: (data: Partial<{ title: string; slug: string; description: string }>) => void;
+  onChange: (data: Partial<{ title: string; slug: string; description: string; hideTitle: boolean; hideAvatar: boolean }>) => void;
   currentProjectId?: string;
+  showVisibilityToggles?: boolean;
 }
 
-export const ProjectBasicInfo = ({ data, onChange, currentProjectId }: ProjectBasicInfoProps) => {
+export const ProjectBasicInfo = ({ data, onChange, currentProjectId, showVisibilityToggles }: ProjectBasicInfoProps) => {
   const [slugStatus, setSlugStatus] = useState<"checking" | "available" | "taken" | "invalid" | null>(null);
   const { user } = useAuth();
 
@@ -151,6 +155,36 @@ export const ProjectBasicInfo = ({ data, onChange, currentProjectId }: ProjectBa
             rows={3}
           />
         </div>
+
+        {showVisibilityToggles && (
+          <div className="space-y-4 pt-4 border-t">
+            <Label className="text-base font-semibold">Opções de Visibilidade</Label>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="hide-title">Ocultar Título</Label>
+                  <p className="text-xs text-muted-foreground">O título não será exibido na página pública</p>
+                </div>
+                <Switch
+                  id="hide-title"
+                  checked={data.hideTitle || false}
+                  onCheckedChange={(checked) => onChange({ hideTitle: checked })}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="hide-avatar">Ocultar Imagem de Perfil</Label>
+                  <p className="text-xs text-muted-foreground">A foto de perfil não será exibida na página pública</p>
+                </div>
+                <Switch
+                  id="hide-avatar"
+                  checked={data.hideAvatar || false}
+                  onCheckedChange={(checked) => onChange({ hideAvatar: checked })}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <Alert>
