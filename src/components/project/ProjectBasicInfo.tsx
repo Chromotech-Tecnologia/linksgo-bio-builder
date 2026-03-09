@@ -21,7 +21,7 @@ interface ProjectBasicInfoProps {
   showVisibilityToggles?: boolean;
 }
 
-export const ProjectBasicInfo = ({ data, onChange, currentProjectId }: ProjectBasicInfoProps) => {
+export const ProjectBasicInfo = ({ data, onChange, currentProjectId, showVisibilityToggles }: ProjectBasicInfoProps) => {
   const [slugStatus, setSlugStatus] = useState<"checking" | "available" | "taken" | "invalid" | null>(null);
   const { user } = useAuth();
 
