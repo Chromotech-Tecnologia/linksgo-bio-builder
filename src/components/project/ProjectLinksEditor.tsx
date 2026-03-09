@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, ExternalLink, GripVertical, Trash2, Edit } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { FileUploader } from "./FileUploader";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Link {
   id?: string;
@@ -40,6 +41,7 @@ const POPULAR_ICONS = [
 ];
 
 export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps) => {
+  const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [formData, setFormData] = useState({
@@ -184,7 +186,7 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
                     onUploadComplete={(url) => setFormData(prev => ({ ...prev, bannerImageUrl: url }))}
                     currentImage={formData.bannerImageUrl}
                     bucket="projects"
-                    path="banners"
+                    path={`${user?.id || 'banners'}/banners`}
                   />
                 </div>
 
