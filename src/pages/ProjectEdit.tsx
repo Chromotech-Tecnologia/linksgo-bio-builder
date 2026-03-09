@@ -46,6 +46,7 @@ const ProjectEdit = () => {
   // Update local state when project data loads
   useEffect(() => {
     if (project) {
+      const config = project.theme_config as any;
       setProjectData({
         title: project.title,
         slug: project.slug,
@@ -54,6 +55,8 @@ const ProjectEdit = () => {
         backgroundUrl: project.background_url || "",
         templateId: project.template_id || "",
         isPublished: project.is_published || false,
+        hideTitle: config?.hide_title || false,
+        hideAvatar: config?.hide_avatar || false,
       });
     }
   }, [project]);
