@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, ExternalLink, GripVertical, Trash2, Edit } from "lucide-react";
@@ -17,6 +18,8 @@ interface Link {
   url: string;
   iconName?: string;
   bannerImageUrl?: string;
+  hideTitle?: boolean;
+  hideImage?: boolean;
 }
 
 interface ProjectLinksEditorProps {
@@ -49,10 +52,12 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
     url: "",
     iconName: "",
     bannerImageUrl: "",
+    hideTitle: false,
+    hideImage: false,
   });
 
   const resetForm = () => {
-    setFormData({ title: "", url: "", iconName: "", bannerImageUrl: "" });
+    setFormData({ title: "", url: "", iconName: "", bannerImageUrl: "", hideTitle: false, hideImage: false });
     setEditingIndex(null);
   };
 
@@ -68,6 +73,8 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
       url: link.url,
       iconName: link.iconName || "",
       bannerImageUrl: link.bannerImageUrl || "",
+      hideTitle: link.hideTitle || false,
+      hideImage: link.hideImage || false,
     });
     setEditingIndex(index);
     setIsDialogOpen(true);
@@ -81,6 +88,8 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
       url: formData.url,
       iconName: formData.iconName || undefined,
       bannerImageUrl: formData.bannerImageUrl || undefined,
+      hideTitle: formData.hideTitle || undefined,
+      hideImage: formData.hideImage || undefined,
       id: editingIndex !== null ? links[editingIndex].id : crypto.randomUUID(),
     };
 
@@ -188,6 +197,32 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
                     bucket="projects"
                     path={`${user?.id || 'banners'}/banners`}
                   />
+                </div>
+
+                <div className="space-y-3 pt-4 border-t">
+                  <Label className="text-base font-semibold">Opções de Visibilidade</Label>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="hide-link-title">Ocultar Título</Label>
+                      <p className="text-xs text-muted-foreground">O título não será exibido no banner</p>
+                    </div>
+                    <Switch
+                      id="hide-link-title"
+                      checked={formData.hideTitle}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, hideTitle: checked }))}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="hide-link-image">Ocultar Ícone</Label>
+                      <p className="text-xs text-muted-foreground">O ícone não será exibido no banner</p>
+                    </div>
+                    <Switch
+                      id="hide-link-image"
+                      checked={formData.hideImage}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, hideImage: checked }))}
+                    />
+                  </div>
                 </div>
 
                 <Button 

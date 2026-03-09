@@ -146,6 +146,8 @@ export type Database = {
           banner_image_url: string | null
           click_count: number
           created_at: string
+          hide_icon: boolean | null
+          hide_title: boolean | null
           icon_name: string | null
           icon_url: string | null
           id: string
@@ -159,6 +161,8 @@ export type Database = {
           banner_image_url?: string | null
           click_count?: number
           created_at?: string
+          hide_icon?: boolean | null
+          hide_title?: boolean | null
           icon_name?: string | null
           icon_url?: string | null
           id?: string
@@ -172,6 +176,8 @@ export type Database = {
           banner_image_url?: string | null
           click_count?: number
           created_at?: string
+          hide_icon?: boolean | null
+          hide_title?: boolean | null
           icon_name?: string | null
           icon_url?: string | null
           id?: string

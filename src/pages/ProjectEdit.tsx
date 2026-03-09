@@ -69,6 +69,8 @@ const ProjectEdit = () => {
         url: link.url,
         iconName: link.icon_name,
         bannerImageUrl: (link as any).banner_image_url,
+        hideTitle: (link as any).hide_title || false,
+        hideImage: (link as any).hide_icon || false,
       })));
     }
   }, [links]);
@@ -117,6 +119,8 @@ const ProjectEdit = () => {
           url: link.url,
           icon_name: link.iconName,
           banner_image_url: link.bannerImageUrl,
+          hide_title: link.hideTitle || false,
+          hide_icon: link.hideImage || false,
           position: index,
         }));
 
