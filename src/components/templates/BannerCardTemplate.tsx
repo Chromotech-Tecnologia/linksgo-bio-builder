@@ -163,19 +163,23 @@ export const BannerCardTemplate = ({ data, onLinkClick }: BannerCardTemplateProp
                   {/* Content */}
                   <div className="relative z-10 flex items-center justify-between w-full p-4">
                     <div className="flex items-center gap-4">
-                      <div 
-                        className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
-                      >
-                        <DynamicIcon name={iconName} className="w-6 h-6" />
-                      </div>
-                      <div className="text-left">
-                        <span 
-                          className="font-bold text-lg block"
-                          style={{ textShadow: hasBannerImage ? '0 1px 4px rgba(0,0,0,0.5)' : 'none' }}
+                      {!link.hide_icon && (
+                        <div 
+                          className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                          style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
                         >
-                          {link.title}
-                        </span>
+                          <DynamicIcon name={iconName} className="w-6 h-6" />
+                        </div>
+                      )}
+                      <div className="text-left">
+                        {!link.hide_title && (
+                          <span 
+                            className="font-bold text-lg block"
+                            style={{ textShadow: hasBannerImage ? '0 1px 4px rgba(0,0,0,0.5)' : 'none' }}
+                          >
+                            {link.title}
+                          </span>
+                        )}
                         {link.subtitle && (
                           <span className="text-sm opacity-80">{link.subtitle}</span>
                         )}

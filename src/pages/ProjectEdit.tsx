@@ -119,6 +119,8 @@ const ProjectEdit = () => {
           url: link.url,
           icon_name: link.iconName,
           banner_image_url: link.bannerImageUrl,
+          hide_title: link.hideTitle || false,
+          hide_icon: link.hideImage || false,
           position: index,
         }));
 

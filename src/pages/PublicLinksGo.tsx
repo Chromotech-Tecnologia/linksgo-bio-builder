@@ -208,19 +208,21 @@ const PublicLinksGo = () => {
                   )}
                   <div className="relative z-10 flex items-center justify-between w-full h-full px-4">
                     <div className="flex items-center gap-3">
-                      {link.icon_name && (
+                      {link.icon_name && !(link as any).hide_icon && (
                         <DynamicIcon 
                           name={link.icon_name} 
                           className="h-5 w-5 opacity-80 text-white" 
                           fallback={ExternalLink}
                         />
                       )}
-                      <span 
-                        className="font-medium text-lg text-white"
-                        style={{ textShadow: link.banner_image_url ? '0 1px 4px rgba(0,0,0,0.5)' : 'none' }}
-                      >
-                        {link.title}
-                      </span>
+                      {!(link as any).hide_title && (
+                        <span 
+                          className="font-medium text-lg text-white"
+                          style={{ textShadow: link.banner_image_url ? '0 1px 4px rgba(0,0,0,0.5)' : 'none' }}
+                        >
+                          {link.title}
+                        </span>
+                      )}
                     </div>
                     <ExternalLink className="h-4 w-4 text-white opacity-70 group-hover:opacity-100 transition-opacity" />
                   </div>
