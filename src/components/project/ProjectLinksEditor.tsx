@@ -72,6 +72,8 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
       url: link.url,
       iconName: link.iconName || "",
       bannerImageUrl: link.bannerImageUrl || "",
+      hideTitle: link.hideTitle || false,
+      hideImage: link.hideImage || false,
     });
     setEditingIndex(index);
     setIsDialogOpen(true);
