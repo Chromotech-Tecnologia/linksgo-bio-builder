@@ -153,6 +153,7 @@ export const ProjectWizard = () => {
       case 1:
         const selectedTemplate = templates?.find(t => t.id === projectData.templateId);
         const isProfessionalTemplate = (selectedTemplate?.config as any)?.layout === 'professional_card';
+        const isBannerTemplate = (selectedTemplate?.config as any)?.layout === 'banner_card';
         return (
           <>
             <TemplateSelector
@@ -160,10 +161,11 @@ export const ProjectWizard = () => {
               onSelectTemplate={(templateId) => {
                 const selected = templates?.find(t => t.id === templateId);
                 const selectedConfig = selected?.config as any;
-                const defaultThemeConfig = selectedConfig?.layout === 'professional_card' 
+                const layout = selectedConfig?.layout;
+                const defaultThemeConfig = (layout === 'professional_card' || layout === 'banner_card')
                   ? { 
                       ...selectedConfig,
-                      layout: 'professional_card' // Ensure layout is explicitly set
+                      layout // Ensure layout is explicitly set
                     }
                   : {};
                 updateProjectData({ templateId, themeConfig: defaultThemeConfig });

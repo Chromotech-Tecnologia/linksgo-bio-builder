@@ -7,6 +7,7 @@ import { ExternalLink, Heart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DynamicIcon } from "@/components/ui/dynamic-icon";
 import { ProfessionalCardTemplate } from "@/components/templates/ProfessionalCardTemplate";
+import { BannerCardTemplate } from "@/components/templates/BannerCardTemplate";
 
 const PublicLinksGo = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -91,6 +92,23 @@ const PublicLinksGo = () => {
 
   const config = project.theme_config as any;
   
+  // Check if this is a banner card template
+  if (config?.layout === 'banner_card') {
+    return (
+      <BannerCardTemplate
+        data={{
+          title: project.title,
+          description: project.description,
+          avatar_url: project.avatar_url,
+          background_url: project.background_url,
+          theme_config: config,
+          project_links: project.project_links || [],
+        }}
+        onLinkClick={handleLinkClick}
+      />
+    );
+  }
+
   // Check if this is a professional card template
   if (config?.layout === 'professional_card') {
     return (
