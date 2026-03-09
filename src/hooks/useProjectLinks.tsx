@@ -29,6 +29,7 @@ export const useCreateProjectLink = () => {
       url: string;
       icon_name?: string;
       icon_url?: string;
+      banner_image_url?: string;
       position: number;
     }) => {
       const { data, error } = await supabase
