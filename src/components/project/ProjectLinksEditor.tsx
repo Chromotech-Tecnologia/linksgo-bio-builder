@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, ExternalLink, GripVertical, Trash2, Edit } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { FileUploader } from "./FileUploader";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Link {
   id?: string;
