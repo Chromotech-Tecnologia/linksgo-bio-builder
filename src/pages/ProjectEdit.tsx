@@ -230,6 +230,7 @@ const ProjectEdit = () => {
                   data={projectData}
                   onChange={(data) => setProjectData(prev => ({ ...prev, ...data }))}
                   currentProjectId={id}
+                  showVisibilityToggles
                 />
               </TabsContent>
 
