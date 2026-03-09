@@ -43,7 +43,9 @@ export const TemplateEditor = ({
     return acc;
   }, {} as Record<string, any[]>) || {};
 
-  const categories = Object.keys(groupedTemplates);
+  // Order categories: Empresarial, Negócios, Personalizado, Smart
+  const categoryOrder = ['Empresarial', 'Negócios', 'Personalizado', 'Smart'];
+  const categories = categoryOrder.filter(cat => groupedTemplates[cat]?.length > 0);
 
   const applyCustomColors = () => {
     onUpdateColors(customColors);
