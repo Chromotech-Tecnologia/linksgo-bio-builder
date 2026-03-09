@@ -156,18 +156,22 @@ const PublicLinksGo = () => {
       <div className="relative z-10 w-full max-w-md mx-auto p-6">
         <div className="text-center space-y-8">
           {/* Avatar */}
-          <Avatar className="w-32 h-32 mx-auto border-4 border-white/30 shadow-xl">
-            <AvatarImage src={project.avatar_url} />
-            <AvatarFallback className="text-3xl font-bold bg-white/20 text-white">
-              {project.title.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+          {!config?.hide_avatar && (
+            <Avatar className="w-32 h-32 mx-auto border-4 border-white/30 shadow-xl">
+              <AvatarImage src={project.avatar_url} />
+              <AvatarFallback className="text-3xl font-bold bg-white/20 text-white">
+                {project.title.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          )}
 
           {/* Info */}
           <div className="space-y-3">
-            <h1 className="text-3xl font-bold drop-shadow-lg">
-              {project.title}
-            </h1>
+            {!config?.hide_title && (
+              <h1 className="text-3xl font-bold drop-shadow-lg">
+                {project.title}
+              </h1>
+            )}
             {project.description && (
               <p className="text-white/90 text-lg leading-relaxed">
                 {project.description}
