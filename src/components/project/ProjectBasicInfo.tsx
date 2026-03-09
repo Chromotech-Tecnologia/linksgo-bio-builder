@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { AlertCircle, Check } from "lucide-react";
@@ -12,9 +13,12 @@ interface ProjectBasicInfoProps {
     title: string;
     slug: string;
     description: string;
+    hideTitle?: boolean;
+    hideAvatar?: boolean;
   };
-  onChange: (data: Partial<{ title: string; slug: string; description: string }>) => void;
+  onChange: (data: Partial<{ title: string; slug: string; description: string; hideTitle: boolean; hideAvatar: boolean }>) => void;
   currentProjectId?: string;
+  showVisibilityToggles?: boolean;
 }
 
 export const ProjectBasicInfo = ({ data, onChange, currentProjectId }: ProjectBasicInfoProps) => {
