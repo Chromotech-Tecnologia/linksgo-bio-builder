@@ -7,6 +7,7 @@ import { ExternalLink, Heart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DynamicIcon } from "@/components/ui/dynamic-icon";
 import { ProfessionalCardTemplate } from "@/components/templates/ProfessionalCardTemplate";
+import { BannerCardTemplate } from "@/components/templates/BannerCardTemplate";
 
 const PublicLinksGo = () => {
   const { slug } = useParams<{ slug: string }>();
