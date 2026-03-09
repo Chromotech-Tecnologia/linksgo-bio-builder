@@ -186,7 +186,7 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
                     onUploadComplete={(url) => setFormData(prev => ({ ...prev, bannerImageUrl: url }))}
                     currentImage={formData.bannerImageUrl}
                     bucket="projects"
-                    path="banners"
+                    path={`${user?.id || 'banners'}/banners`}
                   />
                 </div>
 
