@@ -17,6 +17,8 @@ interface Link {
   url: string;
   iconName?: string;
   bannerImageUrl?: string;
+  hideTitle?: boolean;
+  hideImage?: boolean;
 }
 
 interface ProjectLinksEditorProps {
