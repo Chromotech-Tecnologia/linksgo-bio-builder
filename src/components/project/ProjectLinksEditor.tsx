@@ -41,6 +41,7 @@ const POPULAR_ICONS = [
 ];
 
 export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps) => {
+  const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [formData, setFormData] = useState({
