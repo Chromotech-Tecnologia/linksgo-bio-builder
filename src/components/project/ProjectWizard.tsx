@@ -38,7 +38,7 @@ export const ProjectWizard = () => {
     description: "",
     avatarUrl: "",
     backgroundUrl: "",
-    links: [] as Array<{ title: string; url: string; iconName?: string }>,
+    links: [] as Array<{ title: string; url: string; iconName?: string; bannerImageUrl?: string }>,
     themeConfig: {} as any,
   });
 
