@@ -51,10 +51,12 @@ export const ProjectLinksEditor = ({ links, onChange }: ProjectLinksEditorProps)
     url: "",
     iconName: "",
     bannerImageUrl: "",
+    hideTitle: false,
+    hideImage: false,
   });
 
   const resetForm = () => {
-    setFormData({ title: "", url: "", iconName: "", bannerImageUrl: "" });
+    setFormData({ title: "", url: "", iconName: "", bannerImageUrl: "", hideTitle: false, hideImage: false });
     setEditingIndex(null);
   };
 
