@@ -69,6 +69,8 @@ const ProjectEdit = () => {
         url: link.url,
         iconName: link.icon_name,
         bannerImageUrl: (link as any).banner_image_url,
+        hideTitle: (link as any).hide_title || false,
+        hideImage: (link as any).hide_icon || false,
       })));
     }
   }, [links]);
